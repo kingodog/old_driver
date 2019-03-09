@@ -1,9 +1,11 @@
 #include "read_file.h"
 
-void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, Cross **cross, Road **road){
-    get_car_imformation(CAR_PATH,car_num, car);
-    get_cross_imformation(CROSS_PATH,cross_num, cross);
-    get_road_imformation(ROAD_PATH,road_num, road);
+void get_imformation(int *car_num, int *cross_num, int *road_num, 
+        Car **car, Cross **cross, Road **road, 
+        char *car_path, char *cross_path, char *road_path){
+    get_car_imformation(car_path,car_num, car);
+    get_cross_imformation(cross_path,cross_num, cross);
+    get_road_imformation(road_path,road_num, road);
 }
 
 void get_car_imformation(char *path, int *car_num, Car **car){
@@ -14,14 +16,17 @@ void get_car_imformation(char *path, int *car_num, Car **car){
     if(!fp1)
     {
         printf("can not open the file!\n");
+        return;
     }
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
-        i++;
+         if(StrLine[0] == '('){
+            i++;
+        }
     }
 
-    *car_num=(i+1)/2;                 //包含无效行
-    (*car)=(Car *)malloc(sizeof(Car)*(*car_num));
+    *car_num = i;                 //包含无效行
+    (*car) = (Car *)malloc(sizeof(Car)*(*car_num));
     i=0;
     fseek(fp1, 0, 0);
 
@@ -52,10 +57,12 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
     }
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
-        i++;
+         if(StrLine[0] == '('){
+            i++;
+        }
     }
 
-    *cross_num=(i+1)/2;                 //包含无效行
+    *cross_num = i;                 //包含无效行
     (*cross)=(Cross *)malloc(sizeof(Cross)*(*cross_num));
     i=0;
     fseek(fp1, 0, 0);
@@ -88,10 +95,12 @@ void get_road_imformation(char *path,int *road_num, Road **road){
     }
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
-        i++;
+         if(StrLine[0] == '('){
+            i++;
+        }
     }
 
-    *road_num=(i+1)/2;                 //包含无效行
+    *road_num = i;                 //包含无效行
     (*road)=(Road *)malloc(sizeof(Road)*(*road_num));
     i=0;
     fseek(fp1, 0, 0);

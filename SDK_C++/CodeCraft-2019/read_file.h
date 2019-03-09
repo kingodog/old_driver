@@ -6,9 +6,9 @@
 #include <math.h>
 #include <stdint.h>
 
-#define CAR_PATH        "./Car.txt"
-#define CROSS_PATH      "./Cross.txt"
-#define ROAD_PATH       "./Road.txt"
+#define CAR_PATH        "./SDK_C++/config/car.txt"
+#define CROSS_PATH      "./SDK_C++/config/cross.txt"
+#define ROAD_PATH       "./SDK_C++/config/road.txt"
 #define DEFEATED        ((int)-1)
 #define SUCCESSFUL      ((int)0)
 
@@ -38,7 +38,8 @@ typedef struct
     int bothway;
 }Road;
 
-void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, Cross **cross, Road **road);
+void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
+        Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);
 void get_cross_imformation(char *path,int *cross_num, Cross **cross);
 void get_car_imformation(char *path,int *road_num, Car **car);
 void get_road_imformation(char *path,int *road_num, Road **road);

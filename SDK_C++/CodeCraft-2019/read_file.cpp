@@ -54,6 +54,7 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
     if(!fp1)
     {
         printf("can not open the file!\n");
+        return;
     }
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
@@ -92,6 +93,7 @@ void get_road_imformation(char *path,int *road_num, Road **road){
     if(!fp1)
     {
         printf("can not open the file!\n");
+        return;
     }
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);

@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdint.h>
 #include "read_file.h"
-
+#include "project.h"
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     Cross *cross=NULL;
     Road *road=NULL;
     get_imformation(&car_num, &cross_num, &road_num, &car, &cross, &road, CAR_PATH,CROSS_PATH,ROAD_PATH);
-
+	project_car(car_num, cross_num, road_num, car, cross, road);
 	// TODO:read input filebuf
 	// TODO:process
 	// TODO:write output file

@@ -32,27 +32,27 @@ int main(int argc, char *argv[])
     Car *car=NULL;
     Cross *cross=NULL;
     Road *road=NULL;
-	CarProject *carproject;
+	// CarProject *carproject;
 
-	carproject = (CarProject*)malloc(sizeof(CarProject)*2);			//for test
-	carproject[1].car_id=3001;
-	carproject[1].road_num=3;
-	carproject[1].start_time=1;
-	carproject[1].road=(int*)malloc(sizeof(int)*3);
-	carproject[1].road[0]=1001;
-	carproject[1].road[1]=1002;
-	carproject[1].road[2]=1003;
+	// carproject = (CarProject*)malloc(sizeof(CarProject)*2);			//for test
+	// carproject[1].car_id=3001;
+	// carproject[1].road_num=3;
+	// carproject[1].start_time=1;
+	// carproject[1].road=(int*)malloc(sizeof(int)*3);
+	// carproject[1].road[0]=1001;
+	// carproject[1].road[1]=1002;
+	// carproject[1].road[2]=1003;
 
-	carproject[0].car_id=3000;
-	carproject[0].road_num=2;
-	carproject[0].start_time=2;
-	carproject[0].road=(int*)malloc(sizeof(int)*2);
-	carproject[0].road[0]=2001;
-	carproject[0].road[1]=2002;
+	// carproject[0].car_id=3000;
+	// carproject[0].road_num=2;
+	// carproject[0].start_time=2;
+	// carproject[0].road=(int*)malloc(sizeof(int)*2);
+	// carproject[0].road[0]=2001;
+	// carproject[0].road[1]=2002;
 
     get_imformation(&car_num, &cross_num, &road_num, &car, &cross, &road, CAR_PATH,CROSS_PATH,ROAD_PATH);
 	project_car(car_num, cross_num, road_num, car, cross, road);
-	output_file(OUTPUT_PATH, carproject,  2);						//for test
+	// output_file(OUTPUT_PATH, carproject,  2);						//for test
 	// TODO:read input filebuf
 	// TODO:process
 	// TODO:write output file

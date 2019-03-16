@@ -7,5 +7,7 @@
 #include "topology.h"
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road);
-
+int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num);
+int **new_a_int_matrix(int n);
+void free_a_matrix(int **matrix, int n);
 #endif

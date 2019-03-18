@@ -47,11 +47,14 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         get_next_int(&str, &((*car)[i].end));
         get_next_int(&str, &((*car)[i].speed));
         get_next_int(&str, &((*car)[i].start_time));
+        (*car)[i].status = UNBORN;
+        (*car)[i].project = (CarProject *)malloc(sizeof(CarProject));
         car_classified[(*car)[i].speed]++;
         i++;
     }
     fclose(fp1); 
 }
+
 
 void get_cross_imformation(char *path,int *cross_num, Cross **cross){
     FILE *fp1 = fopen(path,"r");
@@ -167,18 +170,27 @@ void sort_car_by_speed(Car *car, int car_num){          //todo
 }
 
 void new_a_road_content(Road *road){                    //建立道路供车辆行驶
-    int i;
+    int i, j;
     if(road->bothway == 1){ 
         road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
         road->back_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
         for(i = 0;i < road->ways; i++){
             road->forward_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
             road->back_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
+            for(j = 0; j < road->lenth; j++)
+            {
+                road->forward_content[i][j] = NOCAR;
+                road->back_content[i][j] = NOCAR;
+            }  
         }
     } else {
         road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
         for(i = 0;i < road->ways; i++){
             road->forward_content[i] = (Car **)malloc(sizeof(Car*)*road->lenth);
+            for(j = 0; j < road->lenth; j++)
+            {
+                road->forward_content[i][j] = NOCAR;
+            }  
         }
     }
 }

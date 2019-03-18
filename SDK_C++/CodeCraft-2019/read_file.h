@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
+#include "car.h"
+#include "run_cross.h"
+#include "run_road.h"
 
 #define CAR_PATH        "./SDK_C++/config/car.txt"
 #define CROSS_PATH      "./SDK_C++/config/cross.txt"
@@ -12,38 +15,17 @@
 #define DEFEATED        ((int)-1)
 #define SUCCESSFUL      ((int)0)
 
-typedef struct 
-{
-    int id;
-    int start;
-    int end; 
-    int speed;
-    int start_time;
-}Car;
+#define NOCAR           (NULL)
 
-typedef struct 
-{
-    int id;
-    int road_id[4];
-}Cross;
+#define UNBORN          (0)
+#define READY           (1)
+#define WAIT            (2)
+#define END             (3)
+#define ARRIVE          (4)
 
-typedef struct 
-{
-    int id;
-    int lenth;
-    int limit;
-    int ways;
-    int cross_id_strat;
-    int cross_id_end;
-    int bothway;
 
-    int capacity;
-    int forward_flow_num;
-    int back_flow_num;
 
-    Car ***forward_content;
-    Car ***back_content;
-}Road;
+
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
         Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);

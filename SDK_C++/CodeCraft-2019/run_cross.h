@@ -6,8 +6,11 @@
 #include <math.h>
 #include <stdint.h>
 
-
-
+typedef struct 
+{
+    int id;
+    int road_id[4];
+}Cross;
 
 
 #endif

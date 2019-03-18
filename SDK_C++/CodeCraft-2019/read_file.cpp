@@ -124,16 +124,16 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         }
         str = StrLine;
         get_next_int(&str, &((*road)[i].id));
-        get_next_int(&str, &((*road)[i].lenth));
+        get_next_int(&str, &((*road)[i].length));
         get_next_int(&str, &((*road)[i].limit));
-        get_next_int(&str, &((*road)[i].ways));
-        get_next_int(&str, &((*road)[i].cross_id_strat));
+        get_next_int(&str, &((*road)[i].lanes_num));
+        get_next_int(&str, &((*road)[i].cross_id_start));
         get_next_int(&str, &((*road)[i].cross_id_end));
         get_next_int(&str, &((*road)[i].bothway));
-        (*road)[i].capacity = (*road)[i].ways * (*road)[i].lenth;
+        (*road)[i].capacity = (*road)[i].lanes_num * (*road)[i].length;
         (*road)[i].forward_flow_num = 0;
         (*road)[i].back_flow_num = 0;
-        new_a_road_content(&((*road)[i]));
+        new_a_road_road_que(&((*road)[i]));
 
         i++;
     }
@@ -169,27 +169,30 @@ void sort_car_by_speed(Car *car, int car_num){          //todo
 
 }
 
-void new_a_road_content(Road *road){                    //建立道路供车辆行驶
+void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶
     int i, j;
-    if(road->bothway == 1){ 
-        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        road->back_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
-            road->back_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
-            for(j = 0; j < road->lenth; j++)
+    if(road->bothway == 1){
+        road->forward = (road_que *)malloc(sizeof(road_que)); 
+        road->back = (road_que *)malloc(sizeof(road_que)); 
+        road->forward->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        road->back->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        for(i = 0;i < road->lanes_num; i++){
+            road->forward->room[i] = (Car **)malloc(sizeof(Car)*road->length);
+            road->back->room[i] = (Car **)malloc(sizeof(Car)*road->length);
+            for(j = 0; j < road->length; j++)
             {
-                road->forward_content[i][j] = NOCAR;
-                road->back_content[i][j] = NOCAR;
+                road->forward->room[i][j] = NOCAR;
+                road->back->room[i][j] = NOCAR;
             }  
         }
     } else {
-        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car **)malloc(sizeof(Car*)*road->lenth);
-            for(j = 0; j < road->lenth; j++)
+        road->forward = (road_que *)malloc(sizeof(road_que)); 
+        road->forward->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        for(i = 0;i < road->lanes_num; i++){
+            road->forward->room[i] = (Car **)malloc(sizeof(Car*)*road->length);
+            for(j = 0; j < road->length; j++)
             {
-                road->forward_content[i][j] = NOCAR;
+                road->forward->room[i][j] = NOCAR;
             }  
         }
     }

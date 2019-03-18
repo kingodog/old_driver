@@ -33,6 +33,6 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross);
 void get_car_imformation(char *path,int *road_num, Car **car);
 void get_road_imformation(char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);
-void new_a_road_content(Road *road);
+void new_a_road_road_que(Road *road);
 
 #endif

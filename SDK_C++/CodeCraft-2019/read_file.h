@@ -40,6 +40,9 @@ typedef struct
     int capacity;
     int forward_flow_num;
     int back_flow_num;
+
+    Car **forward_content;
+    Car **back_content;
 }Road;
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
@@ -48,5 +51,6 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross);
 void get_car_imformation(char *path,int *road_num, Car **car);
 void get_road_imformation(char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);
+void new_a_road_content(Road *road);
 
 #endif

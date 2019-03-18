@@ -130,6 +130,8 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         (*road)[i].capacity = (*road)[i].ways * (*road)[i].lenth;
         (*road)[i].forward_flow_num = 0;
         (*road)[i].back_flow_num = 0;
+        new_a_road_content(&((*road)[i]));
+
         i++;
     }
     fclose(fp1);
@@ -162,4 +164,21 @@ int get_next_int(char **str, int *num){
 
 void sort_car_by_speed(Car *car, int car_num){          //todo
 
+}
+
+void new_a_road_content(Road *road){                    //建立道路供车辆行驶
+    int i;
+    if(road->bothway == 1){ 
+        road->forward_content = (Car **)malloc(sizeof(Car*)*road->ways);  
+        road->back_content = (Car **)malloc(sizeof(Car*)*road->ways);  
+        for(i = 0;i < road->ways; i++){
+            road->forward_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
+            road->back_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
+        }
+    } else {
+        road->forward_content = (Car **)malloc(sizeof(Car*)*road->ways);  
+        for(i = 0;i < road->ways; i++){
+            road->forward_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
+        }
+    }
 }

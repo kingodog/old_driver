@@ -1,6 +1,6 @@
 #include "read_file.h"
 
-int car_classified[10];
+int car_classified[11];
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
@@ -15,7 +15,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
     char StrLine[1024];
     char *str;
     int i=0;
-    for(i = 0; i < 10; i++){
+    for(i = 0; i < 10; i++){     //初始化数组;
         car_classified[i] = 0;
     }
     
@@ -160,6 +160,6 @@ int get_next_int(char **str, int *num){
     return SUCCESSFUL;
 }
 
-void sort_car_by_speed(Car *car, int car_num){
+void sort_car_by_speed(Car *car, int car_num){          //todo
 
 }

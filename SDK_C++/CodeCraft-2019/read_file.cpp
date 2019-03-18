@@ -1,5 +1,7 @@
 #include "read_file.h"
 
+int car_classified[10];
+
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
         char *car_path, char *cross_path, char *road_path){
@@ -13,6 +15,10 @@ void get_car_imformation(char *path, int *car_num, Car **car){
     char StrLine[1024];
     char *str;
     int i=0;
+    for(i = 0; i < 10; i++){
+        car_classified[i] = 0;
+    }
+    
     if(!fp1)
     {
         printf("can not open the file!\n");
@@ -41,6 +47,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         get_next_int(&str, &((*car)[i].end));
         get_next_int(&str, &((*car)[i].speed));
         get_next_int(&str, &((*car)[i].start_time));
+        car_classified[(*car)[i].speed]++;
         i++;
     }
     fclose(fp1); 
@@ -120,6 +127,9 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         get_next_int(&str, &((*road)[i].cross_id_strat));
         get_next_int(&str, &((*road)[i].cross_id_end));
         get_next_int(&str, &((*road)[i].bothway));
+        (*road)[i].capacity = (*road)[i].ways * (*road)[i].lenth;
+        (*road)[i].forward_flow_num = 0;
+        (*road)[i].back_flow_num = 0;
         i++;
     }
     fclose(fp1);
@@ -148,4 +158,8 @@ int get_next_int(char **str, int *num){
     *num = atoi(str_num);
     *str = &data[i];            //改变指针位置，为下一次读取准备
     return SUCCESSFUL;
+}
+
+void sort_car_by_speed(Car *car, int car_num){
+
 }

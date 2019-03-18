@@ -85,7 +85,7 @@ int ** build_cost_matrix_by_length(Cross *cross, Road *road, int cross_num, int 
     return cost_matrix;
 }
 
-int get_road_cost_by_length(int start_id, int end_id, Road *road, int road_num){             //根据道路长度确定花费
+int get_road_cost_by_length(int start_id, int end_id, Road *road, int road_num){             //根据道路宽度确定容量
     int i;
     for(i = 0; i < road_num; i++){
         if(road[i].cross_id_strat == start_id && road[i].cross_id_end == end_id){

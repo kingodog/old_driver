@@ -36,6 +36,10 @@ typedef struct
     int cross_id_strat;
     int cross_id_end;
     int bothway;
+
+    int capacity;
+    int forward_flow_num;
+    int back_flow_num;
 }Road;
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 

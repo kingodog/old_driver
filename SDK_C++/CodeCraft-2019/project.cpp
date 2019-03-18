@@ -99,3 +99,25 @@ void free_a_matrix(int **matrix, int n){
     }
     free(matrix);
 }
+
+void reset_flow(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++){
+        road[i].forward_flow_num = 0;
+        road[i].back_flow_num = 0;
+    }
+}
+
+void reset_back_flow(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++){
+        road[i].back_flow_num = 0;
+    }
+}
+
+void reset_forward_flow(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++){
+        road[i].forward_flow_num = 0;
+    }
+}

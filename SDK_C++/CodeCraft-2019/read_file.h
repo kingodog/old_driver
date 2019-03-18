@@ -41,8 +41,8 @@ typedef struct
     int forward_flow_num;
     int back_flow_num;
 
-    Car **forward_content;
-    Car **back_content;
+    Car ***forward_content;
+    Car ***back_content;
 }Road;
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 

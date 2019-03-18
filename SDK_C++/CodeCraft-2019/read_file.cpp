@@ -169,16 +169,16 @@ void sort_car_by_speed(Car *car, int car_num){          //todo
 void new_a_road_content(Road *road){                    //建立道路供车辆行驶
     int i;
     if(road->bothway == 1){ 
-        road->forward_content = (Car **)malloc(sizeof(Car*)*road->ways);  
-        road->back_content = (Car **)malloc(sizeof(Car*)*road->ways);  
+        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
+        road->back_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
         for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
-            road->back_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
+            road->forward_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
+            road->back_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
         }
     } else {
-        road->forward_content = (Car **)malloc(sizeof(Car*)*road->ways);  
+        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
         for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car *)malloc(sizeof(Car)*road->lenth);
+            road->forward_content[i] = (Car **)malloc(sizeof(Car*)*road->lenth);
         }
     }
 }

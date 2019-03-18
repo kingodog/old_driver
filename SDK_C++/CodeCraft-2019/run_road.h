@@ -5,14 +5,22 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
-#include "car.h"
-typedef struct 
-{
+#include <assert.h>
+#include <stdbool.h>
+#include <car.h>
+
+typedef struct {
+    int head;
+    int tail;
+    Car ***room;
+} road_que;
+
+typedef struct {
     int id;
-    int lenth;
+    int length;
     int limit;
-    int ways;
-    int cross_id_strat;
+    int lanes_num;
+    int cross_id_start;
     int cross_id_end;
     int bothway;
 
@@ -20,10 +28,8 @@ typedef struct
     int forward_flow_num;
     int back_flow_num;
 
-    Car ***forward_content;
-    Car ***back_content;
-}Road;
-
-
+    road_que *forward;
+    road_que *back;
+} Road;
 
 #endif

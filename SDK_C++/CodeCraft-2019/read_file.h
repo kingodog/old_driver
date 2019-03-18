@@ -1,6 +1,7 @@
 #ifndef _READ_FILE_H_
 #define _READ_FILE_H_
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -8,6 +9,22 @@
 #include "car.h"
 #include "run_cross.h"
 #include "run_road.h"
+#include <hash_map>
+
+
+
+#ifndef _ROAD_MAP_H_
+#define _ROAD_MAP_H_
+
+namespace std
+{
+    using namespace __gnu_cxx;
+}
+
+using namespace std;
+
+
+#endif
 
 #define CAR_PATH        "./SDK_C++/config/car.txt"
 #define CROSS_PATH      "./SDK_C++/config/cross.txt"

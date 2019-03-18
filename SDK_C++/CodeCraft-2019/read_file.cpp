@@ -1,7 +1,7 @@
 #include "read_file.h"
 
 int car_classified[11];
-
+extern hash_map<int, Road> road_map;
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
         char *car_path, char *cross_path, char *road_path){
@@ -11,6 +11,7 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
 }
 
 void get_car_imformation(char *path, int *car_num, Car **car){
+
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
     char *str;
@@ -134,7 +135,7 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         (*road)[i].forward_flow_num = 0;
         (*road)[i].back_flow_num = 0;
         new_a_road_road_que(&((*road)[i]));
-
+        road_map[(*road)[i].id] = (*road)[i];
         i++;
     }
     fclose(fp1);

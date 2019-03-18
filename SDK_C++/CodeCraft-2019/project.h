@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "read_file.h"
 #include "topology.h"
 #include "run_road.h"
 #include "car.h"

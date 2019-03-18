@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
+#include "run_road.h"
+
+#define  STRAIGHT   (0)
+#define  LEFT       (1)
+#define  RIGHT      (2)
 
 typedef struct 
 {

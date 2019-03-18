@@ -8,6 +8,9 @@
 #include "topology.h"
 #include "output_file.h"
 #include "run_road.h"
+
+hash_map<int, Road> road_map;
+
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;
@@ -58,5 +61,6 @@ int main(int argc, char *argv[])
 	// TODO:process
 	// TODO:write output file
 	
+
 	return 0;
 }

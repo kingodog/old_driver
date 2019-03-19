@@ -55,7 +55,7 @@ void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
         get_next_int(&str, &((*car)[i].start_time));
         (*car)[i].status = UNBORN;
         (*car)[i].project = (CarProject *)malloc(sizeof(CarProject));
-        // (*car)[i].project->road = (int *)malloc(sizeof(int)*)
+        (*car)[i].project->road_num = 0;
         car_classified[(*car)[i].speed]++;
         i++;
     }
@@ -96,10 +96,66 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
         get_next_int(&str, &((*cross)[i].road_id[1]));
         get_next_int(&str, &((*cross)[i].road_id[2]));
         get_next_int(&str, &((*cross)[i].road_id[3]));
+        sort_cross_road_id(&((*cross)[i]));
         cross_map[(*cross)[i].id] = (*cross)[i];
         i++;
     }
     fclose(fp1);
+}
+
+void  sort_cross_road_id(Cross *cross){
+    int i,j;
+    int total_road = 0;
+    j = 0;
+    for(i = 0; i < 4; i++){
+        cross->road_id_sorted[i] = -1;
+        if(cross->road_id[i] != -1){
+            cross->road_id_sorted[j] = cross->road_id[i];
+            total_road ++;
+            j++;
+        }
+    }
+
+    switch (total_road)
+    {
+        case 1:
+            break;
+        case 2:
+            if(cross->road_id_sorted[0] > cross->road_id_sorted[1]){
+                exchange_int_num(&(cross->road_id_sorted[0]), &(cross->road_id_sorted[1]));
+            }
+            break;
+        case 3:
+            for(i = 0;i < 2; i++){
+                for(j = 2;j > i; j--){
+                    if(cross->road_id_sorted[j-1] > cross->road_id_sorted[j]){
+                        exchange_int_num(&(cross->road_id_sorted[j-1]), &(cross->road_id_sorted[j]));
+                    }
+                }
+            }
+            
+            break;
+        case 4:
+            for(i = 0;i < 3; i++){
+                for(j = 3;j > i; j--){
+                    if(cross->road_id_sorted[j-1] > cross->road_id_sorted[j]){
+                        exchange_int_num(&(cross->road_id_sorted[j-1]), &(cross->road_id_sorted[j]));
+                    }
+                }
+            }
+            break;
+    
+        default:
+            printf("sort_cross_road_id is wrong!\n");
+            break;
+    }
+}
+
+void exchange_int_num(int *a, int *b){
+    int k;
+    k = *a;
+    *a = *b;
+    *b = k;
 }
 
 void get_road_imformation(char *path,int *road_num, Road **road){

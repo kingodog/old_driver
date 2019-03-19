@@ -1,12 +1,15 @@
 #ifndef _RUN_CAR_H_
 #define _RUN_CAR_H_
 
+#define  CAR_MAX_RECORD (100)
+
+
 typedef struct 
 {
     int car_id;
     int start_time;
     int road_num;
-    int *road;
+    int road[CAR_MAX_RECORD];
 }CarProject;
 
 typedef struct 

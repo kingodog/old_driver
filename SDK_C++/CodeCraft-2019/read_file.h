@@ -41,9 +41,6 @@ using namespace std;
 #define ARRIVE          (4)
 
 
-
-
-
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
         Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);
 void get_cross_imformation(char *path,int *cross_num, Cross **cross);
@@ -52,5 +49,7 @@ void get_road_imformation(char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);
 void new_a_road_road_que(Road *road);
 void sort_car_by_speed(Car *car, int car_num);
+void sort_cross_road_id(Cross *cross);
+void exchange_int_num(int *a, int *b);
 
 #endif

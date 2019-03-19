@@ -1,7 +1,7 @@
 #include "project.h"
 
 extern unsigned int time;
-extern Car *car_head;
+
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
     //sort()
     // car_head = &(car[0]);
@@ -94,4 +94,8 @@ void reset_forward_flow(Road *road, int road_num){
     for(i = 0; i < road_num; i++){
         road[i].forward_flow_num = 0;
     }
+}
+
+int get_next_road(int start, int end, Cross *cross){                //todo
+    return 1;
 }

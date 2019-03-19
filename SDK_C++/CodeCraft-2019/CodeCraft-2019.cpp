@@ -12,9 +12,8 @@
 hash_map<int, Road> road_map;
 hash_map<int, Cross> cross_map;
 unsigned int time = 0;
-Car *car_head;
 Car **car_sort_by_speed;
-
+int lock = 1;
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;

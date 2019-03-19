@@ -1,16 +1,20 @@
 #include "read_file.h"
 
+extern Car **car_sort_by_speed;
 int car_classified[11];
 extern hash_map<int, Road> road_map;
+extern hash_map<int, Cross> cross_map;
+
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
         char *car_path, char *cross_path, char *road_path){
-    get_car_imformation(car_path,car_num, car);
     get_cross_imformation(cross_path,cross_num, cross);
-    get_road_imformation(road_path,road_num, road);
+    get_road_imformation(road_path, road_num, road);
+    get_car_imformation(car_path,car_num, car, road_num);
+    sort_car_by_speed(*car, *car_num);
 }
 
-void get_car_imformation(char *path, int *car_num, Car **car){
+void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
 
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
@@ -25,6 +29,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         printf("can not open the file!\n");
         return;
     }
+    i = 0;
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
          if(StrLine[0] == '('){
@@ -50,6 +55,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         get_next_int(&str, &((*car)[i].start_time));
         (*car)[i].status = UNBORN;
         (*car)[i].project = (CarProject *)malloc(sizeof(CarProject));
+        // (*car)[i].project->road = (int *)malloc(sizeof(int)*)
         car_classified[(*car)[i].speed]++;
         i++;
     }
@@ -90,6 +96,7 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
         get_next_int(&str, &((*cross)[i].road_id[1]));
         get_next_int(&str, &((*cross)[i].road_id[2]));
         get_next_int(&str, &((*cross)[i].road_id[3]));
+        cross_map[(*cross)[i].id] = (*cross)[i];
         i++;
     }
     fclose(fp1);
@@ -166,8 +173,18 @@ int get_next_int(char **str, int *num){
     return SUCCESSFUL;
 }
 
-void sort_car_by_speed(Car *car, int car_num){          //todo
-
+void sort_car_by_speed(Car *car, int car_num){          //按照速度排序速度慢的在前
+    int car_sort[11];
+    int i;
+	car_sort_by_speed = (Car **)malloc(sizeof(Car*)*(car_num));
+    car_sort[0] = car_classified[0];
+    for(i = 1; i < 11; i++){
+		car_sort[i] = car_classified[i-1] + car_sort[i-1];
+	}
+	for(i = 0; i < car_num; i++){
+		car_sort_by_speed[car_sort[car[i].speed]] = &(car[i]);
+		car_sort[car[i].speed]++;
+	}
 }
 
 void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶

@@ -1,71 +1,109 @@
 #include "run_road.h"
 
-road_que *init_road_que(int length, int width){
+Road_que *init_road_que(int columns_num, int rows_num){
     int i;
-    road_que *road = (road_que *)malloc(sizeof(road_que));
-    Car ***lanes = (Car ***)malloc(sizeof(Car **) * width);
+    Road_que *road = (Road_que *)malloc(sizeof(Road_que));
+    Car ***lanes = (Car ***)malloc(sizeof(Car **) * rows_num);
     assert(road && lanes);
 
-    for(i = 0; i < width; i++){
-        lanes[i] = (Car **)malloc(sizeof(Car*) * length);
+    for(i = 0; i < rows_num; i++){
+        lanes[i] = (Car **)malloc(sizeof(Car*) * columns_num);
         assert(lanes[i]);
     }
 
     road->head = -1;
     road->tail = 0;
-    road->room = lanes;
+    road->lanes = lanes;
 
     return road;
 }
 
-void destroy_road_que(road_que *road){
-    free(road->room);
-    road->room = NULL;
+void destroy_road_que(Road_que *road){
+    free(road->lanes);
+    road->lanes = NULL;
     free(road);
     road = NULL;
 }
 
-bool is_empty(road_que *que){
+bool que_is_empty(Road_que *que){
     return que->head == -1;
 }
 
-bool is_full(road_que *que){
+bool que_is_full(Road_que *que){
     return que->tail == que->head;
 }
 
-bool enqueue(Road *road, Car *car, int speed, int dir){
-    road_que * que;
+bool enqueue(Road *road, Car *car, int real_speed, int dir){
+    Road_que * que;
     if(dir == 1){
         que = road->forward;
-    } else {
+    }else{
         que = road->back;
     }
-    if(is_full(road->forward)){
+
+    if(que_is_full(que)){
         printf("overflow!\n");
         return false;
     }
     
-    road->forward->room[road->forward->tail / road->length][road->length - speed] = car;
-    if(road->forward->head == -1){
-        road->forward->head = road->forward->tail;
+    que->lanes[que->tail / road->length][road->length - real_speed] = car;
+    que->tail = (que->tail / road->length) * road->length + road->length - real_speed;
+    if(que->head == -1){
+        que->head = que->tail;
     }
-    road->forward->tail = (road->forward->head + 1) % (road->length * road->lanes_num);
+    que->tail = (que->tail + 1) % (road->length * road->lanes_num);
 
     return true;
 }
 
-Car *dequeue(Road *road){
-    if(is_empty(road->forward)){
+Car *dequeue(Road *road, int dir){
+    Road_que * que;
+    if(dir == 1){
+        que = road->forward;
+    }else{
+        que = road->back;
+    }
+
+    if(que_is_empty(que)){
         printf("underflow!\n");
         return NULL;
     }
 
-    Car *tmp = road->forward->room[road->forward->head / road->length][road->forward->head % road->length];
-    road->forward->head = (road->forward->head + 1) % (road->length * road->lanes_num);
-    if(road->forward->head == road->forward->tail){
-        road->forward->head = -1;
-        road->forward->tail = 0;
+    int row = que->head / road->length;
+    int column = que->head % road->length;
+    Car *tmp = que->lanes[row][column];
+    que->lanes[row][column] = NULL;
+
+    while(!que->lanes[row][column] && que->head != que->tail){
+        row = (row + 1) % road->lanes_num;
+        if(!row){
+            column++;
+        }
+        que->head = row * road->length + column;
+    }
+    
+    if(que->head == que->tail){
+        que->head = -1;
+        que->tail = 0;
     }
 
     return tmp;
 }
+
+void pass_through(Road_que *que, int curr_row, int curr_column, int real_speed){
+    Car *tmp = que->lanes[curr_row][curr_column];
+    que->lanes[curr_row][curr_column - real_speed] = tmp;
+    que->lanes[curr_row][curr_column] = NULL;
+}
+
+int get_real_speed(Road *road, Car *car, int curr_column, int block){
+    return MIN(MIN(road->limit, car->speed), curr_column - block);
+}
+
+// void run_cars_on_road(Road *road){
+//     int block = 0;
+//     int i, j;
+//     while(road->forward->head){
+
+//     }
+// }

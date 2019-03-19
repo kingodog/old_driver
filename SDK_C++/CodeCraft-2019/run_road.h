@@ -7,13 +7,17 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
-#include <car.h>
+#include "car.h"
+
+#define FORWARD         ((int)1)
+#define BACK            ((int)-1)
+#define MIN(a, b)       (a < b)?(a):(b)
 
 typedef struct {
     int head;
     int tail;
-    Car ***room;
-} road_que;
+    Car ***lanes;
+} Road_que;
 
 typedef struct {
     int id;
@@ -28,8 +32,8 @@ typedef struct {
     int forward_flow_num;
     int back_flow_num;
 
-    road_que *forward;
-    road_que *back;
+    Road_que *forward;
+    Road_que *back;
 } Road;
 
 #endif

@@ -11,11 +11,13 @@
 
 #define FORWARD         ((int)1)
 #define BACK            ((int)-1)
+#define ROW             ((int)0)
+#define CLM             ((int)1)
 #define MIN(a, b)       (a < b)?(a):(b)
 
 typedef struct {
-    int head;
-    int tail;
+    int head[2];
+    int tail[2];
     Car ***lanes;
 } Road_que;
 

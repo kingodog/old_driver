@@ -1,6 +1,12 @@
 #ifndef _RUN_CAR_H_
 #define _RUN_CAR_H_
 
+#define UNBORN          (0)
+#define READY           (1)
+#define WAIT            (2)
+#define END             (3)
+#define ARRIVE          (4)
+
 typedef struct 
 {
     int car_id;

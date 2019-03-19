@@ -17,16 +17,6 @@
 
 #define NOCAR           (NULL)
 
-#define UNBORN          (0)
-#define READY           (1)
-#define WAIT            (2)
-#define END             (3)
-#define ARRIVE          (4)
-
-
-
-
-
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
         Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);
 void get_cross_imformation(char *path,int *cross_num, Cross **cross);

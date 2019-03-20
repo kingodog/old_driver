@@ -45,6 +45,7 @@ bool que_is_full(Road_que *que);
 bool enqueue(Road *road, Car *car, int real_speed, int dir);
 Car *dequeue(Road *road, int dir);
 void pass_through(Road_que *que, int curr_row, int curr_column, int real_speed);
+int get_real_speed(Road *road, Car *car, int curr_column, int block);
 void set_head(Road *road);
 void set_tail(Road *road);
 void set_cars_status(Road *road);

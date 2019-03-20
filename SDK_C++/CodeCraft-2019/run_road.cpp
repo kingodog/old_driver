@@ -1,7 +1,7 @@
 #include "run_road.h"
 
 Road_que *init_road_que(int columns_num, int rows_num){
-    int i;
+    int i, j;
     Road_que *que = (Road_que *)malloc(sizeof(Road_que));
     Car ***lanes = (Car ***)malloc(sizeof(Car **) * rows_num);
     assert(que && lanes);
@@ -16,6 +16,11 @@ Road_que *init_road_que(int columns_num, int rows_num){
     que->tail[ROW] = 0;
     que->tail[CLM] = 0;
     que->lanes = lanes;
+    for(i = 0; i < rows_num; i++){
+        for(j = 0; j < columns_num; j++){
+            que->lanes[i][j] = NULL;
+        }
+    }
 
     return que;
 }
@@ -38,7 +43,7 @@ bool que_is_full(Road_que *que){
         return (que->tail[ROW] == 0) && (que->tail[CLM] == 0);
     }
 }
-//入队后head没有更新！！！！！！！
+
 bool enqueue(Road *road, Car *car, int real_speed, int dir){
     Road_que * que;
     if(dir == FORWARD){
@@ -55,8 +60,9 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
 
     que->tail[CLM] = road->length - real_speed;
     que->lanes[que->tail[ROW]][que->tail[CLM]] = car;
+    car->status = END;
 
-    if(que_is_empty(que)){
+    if(que->tail[CLM] < que->head[CLM] || que_is_empty(que)){
         que->head[ROW] = que->tail[ROW];
         que->head[CLM] = que->tail[CLM];
     }
@@ -104,15 +110,29 @@ Car *dequeue(Road *road, int dir){
     return tmp;
 }
 
-void pass_through(Road_que *que, int curr_row, int curr_column, int real_speed){
+void pass_through(Road_que *que, int curr_row, int curr_column, int columns_num, int real_speed){
+    if(curr_row == que->tail[ROW] && curr_column == (columns_num - 1)){
+        que->tail[CLM] = curr_column - real_speed + 1;
+    }
+
     Car *tmp = que->lanes[curr_row][curr_column];
-    que->lanes[curr_row][curr_column - real_speed] = tmp;
     que->lanes[curr_row][curr_column] = NULL;
+    curr_column -= real_speed;
+    que->lanes[curr_row][curr_column] = tmp;
+
+    if(curr_column < que->head[CLM] || (curr_column == que->head[CLM] && curr_row < que->head[ROW])){
+        que->head[ROW] = curr_row;
+        que->head[CLM] = curr_column;
+    }
 }
 
-int get_real_speed(Road *road, Car *car, int curr_column, int block){
-    return MIN(MIN(road->limit, car->speed), curr_column - block);
+inline int get_min(int a, int b){
+    return (a < b) ? a : b;
 }
+
+// int get_real_speed(Road *road, Car *car, int curr_column, int block){
+//     return MIN(MIN(road->limit, car->speed), curr_column - block - 1);
+// }
 
 void set_head(Road *road){
     int i, j, k;
@@ -164,7 +184,7 @@ void set_cars_status(Road *road){
     for(k = 0; k <= road->bothway; k++){
         Road_que * que = (k == 0) ? road->forward : road->back;
         for(i = 0; i < road->lanes_num; i++){
-            block = 0;
+            block = -1;
             prev = NULL;
             for(j = 0; j < road->length; j++){
                 curr = que->lanes[i][j];
@@ -172,32 +192,32 @@ void set_cars_status(Road *road){
                     continue; 
                 }
 
-                speed = MIN(MIN(road->limit, curr->speed), j - block);
+                speed = get_min(get_min(road->limit, curr->speed), j - block - 1);
 
                 if(!prev){
-                    if((j - block) < MIN(road->limit, curr->speed)){
+                    if((j - block - 1) < (get_min(road->limit, curr->speed))){
                         curr->status = WAIT;
+                        block = j;
                     }else{
-                        pass_through(que, i, j, speed);
+                        pass_through(que, i, j, road->length, speed);
                         curr->status = END;
+                        block = j - speed;
+                    }
+                }else{
+                    if((j - block - 1) < (get_min(road->limit, curr->speed)) && prev->status == WAIT){
+                        curr->status = WAIT;
+                        block = j;
+                    }else{
+                        pass_through(que, i, j, road->length, speed);
+                        curr->status = END;
+                        block = j - speed;
                     }
                 }
 
-                if((j - block) < MIN(road->limit, curr->speed) && prev->status == WAIT){
-                    curr->status = WAIT;
-                }else{
-                    pass_through(que, i, j, speed);
-                    curr->status = END;
-                }
-
-                block = j;
                 prev = curr;
             }
         }
     }
-
-    set_head(road);
-    set_tail(road);
 }
 
 int main(){
@@ -211,20 +231,28 @@ int main(){
     road->back = NULL;
 
     Car *car1 = (Car *)malloc(sizeof(Car));
+    car1->id = 1;
     car1->speed = 1;
     Car *car2 = (Car *)malloc(sizeof(Car));
+    car2->id = 2;
     car2->speed = 2;
     Car *car3 = (Car *)malloc(sizeof(Car));
+    car3->id = 3;
     car3->speed = 3;
     Car *car4 = (Car *)malloc(sizeof(Car));
+    car4->id = 4;
     car4->speed = 4;
     Car *car5 = (Car *)malloc(sizeof(Car));
+    car5->id = 5;
     car5->speed = 5;
     Car *car6 = (Car *)malloc(sizeof(Car));
+    car6->id = 6;
     car6->speed = 6;
     Car *car7 = (Car *)malloc(sizeof(Car));
+    car7->id = 7;
     car7->speed = 7;
     Car *car8 = (Car *)malloc(sizeof(Car));
+    car8->id = 8;
     car8->speed = 8;
 
     //空路进一辆车
@@ -269,7 +297,21 @@ int main(){
     if(road->forward->lanes[2][9] == car7){
         printf("(2,9) has car7\n");
     }
+    //进第八辆车失败
     enqueue(road, car8, 8, FORWARD);
+    //行进并标记状态
+    while(road->forward->lanes[road->forward->head[ROW]][road->forward->head[CLM]]->status != WAIT){
+        set_cars_status(road);
+        for(int i = 0; i < road->lanes_num; i++){
+            for(int j = 0; j < road->length; j++){
+                if(!road->forward->lanes[i][j]){
+                    continue;
+                }
+                printf("(%d,%d) has car%d\n", i, j, road->forward->lanes[i][j]->id);
+            }
+        }
+    }
+    //出队
 
     destroy_road_que(road->forward);
     free(road);

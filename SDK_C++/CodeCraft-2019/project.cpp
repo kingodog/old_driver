@@ -1,37 +1,11 @@
 #include "project.h"
 
-
+extern unsigned int time;
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
-    // int matrix[5][5] = {{0, 3, 8, INFINITY_INT, -4},{INFINITY_INT, 0, INFINITY_INT, 1, 7},{INFINITY_INT, 4, 0, INFINITY_INT, INFINITY_INT},{2, INFINITY_INT, -5, 0, INFINITY_INT},{INFINITY_INT, INFINITY_INT, INFINITY_INT, 6, 0}};
-    // int **matrix;
-    // int **output_matrix;
-    // int i, j;
-    // int a1[5],a2[5],a3[5],a4[5],a5[5];
-
-    // matrix = new_a_int_matrix(cross_num);
-    // matrix = (int**)malloc(sizeof(int*)*5);  
-
-    // int a1[5] = {0, 3, 8, INFINITY_INT, -4};
-    // int a2[5] = {INFINITY_INT, 0, INFINITY_INT, 1, 7};
-    // int a3[5] = {INFINITY_INT, 4, 0, INFINITY_INT, INFINITY_INT};
-    // int a4[5] = {2, INFINITY_INT, -5, 0, INFINITY_INT};
-    // int a5[5] = {INFINITY_INT, INFINITY_INT, INFINITY_INT, 6, 0};
-    // matrix[0]=a1;
-    // matrix[1]=a2;
-    // matrix[2]=a3;
-    // matrix[3]=a4;
-    // matrix[4]=a5;
-    // output_matrix = get_precursor_matrix_floyd(matrix, 5);
-    // matrix = get_precursor_matrix_floyd(cross, road, cross_num, road_num);
-
-    // for(i = 0; i < 5; i++){                                         //for test
-    //     for(j = 0; j < 5; j++){
-    //        printf("%d  ",output_matrix[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-
+    //sort()
+    // car_head = &(car[0]);
+    // put_car(car_head); 
     return;
 }
 
@@ -120,4 +94,8 @@ void reset_forward_flow(Road *road, int road_num){
     for(i = 0; i < road_num; i++){
         road[i].forward_flow_num = 0;
     }
+}
+
+int get_next_road(int start, int end, Cross *cross){                //todo
+    return 1;
 }

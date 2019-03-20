@@ -1,16 +1,21 @@
 #include "read_file.h"
 
+extern Car **car_sort_by_speed;
 int car_classified[11];
+extern hash_map<int, Road> road_map;
+extern hash_map<int, Cross> cross_map;
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
         char *car_path, char *cross_path, char *road_path){
-    get_car_imformation(car_path,car_num, car);
     get_cross_imformation(cross_path,cross_num, cross);
-    get_road_imformation(road_path,road_num, road);
+    get_road_imformation(road_path, road_num, road);
+    get_car_imformation(car_path,car_num, car, road_num);
+    sort_car_by_speed(*car, *car_num);
 }
 
-void get_car_imformation(char *path, int *car_num, Car **car){
+void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
+
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
     char *str;
@@ -24,6 +29,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         printf("can not open the file!\n");
         return;
     }
+    i = 0;
     while(!feof(fp1)){
         fgets(StrLine,1024,fp1);
          if(StrLine[0] == '('){
@@ -49,6 +55,7 @@ void get_car_imformation(char *path, int *car_num, Car **car){
         get_next_int(&str, &((*car)[i].start_time));
         (*car)[i].status = UNBORN;
         (*car)[i].project = (CarProject *)malloc(sizeof(CarProject));
+        (*car)[i].project->road_num = 0;
         car_classified[(*car)[i].speed]++;
         i++;
     }
@@ -89,9 +96,66 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
         get_next_int(&str, &((*cross)[i].road_id[1]));
         get_next_int(&str, &((*cross)[i].road_id[2]));
         get_next_int(&str, &((*cross)[i].road_id[3]));
+        sort_cross_road_id(&((*cross)[i]));
+        cross_map[(*cross)[i].id] = (*cross)[i];
         i++;
     }
     fclose(fp1);
+}
+
+void  sort_cross_road_id(Cross *cross){
+    int i,j;
+    int total_road = 0;
+    j = 0;
+    for(i = 0; i < 4; i++){
+        cross->road_id_sorted[i] = -1;
+        if(cross->road_id[i] != -1){
+            cross->road_id_sorted[j] = cross->road_id[i];
+            total_road ++;
+            j++;
+        }
+    }
+
+    switch (total_road)
+    {
+        case 1:
+            break;
+        case 2:
+            if(cross->road_id_sorted[0] > cross->road_id_sorted[1]){
+                exchange_int_num(&(cross->road_id_sorted[0]), &(cross->road_id_sorted[1]));
+            }
+            break;
+        case 3:
+            for(i = 0;i < 2; i++){
+                for(j = 2;j > i; j--){
+                    if(cross->road_id_sorted[j-1] > cross->road_id_sorted[j]){
+                        exchange_int_num(&(cross->road_id_sorted[j-1]), &(cross->road_id_sorted[j]));
+                    }
+                }
+            }
+            
+            break;
+        case 4:
+            for(i = 0;i < 3; i++){
+                for(j = 3;j > i; j--){
+                    if(cross->road_id_sorted[j-1] > cross->road_id_sorted[j]){
+                        exchange_int_num(&(cross->road_id_sorted[j-1]), &(cross->road_id_sorted[j]));
+                    }
+                }
+            }
+            break;
+    
+        default:
+            printf("sort_cross_road_id is wrong!\n");
+            break;
+    }
+}
+
+void exchange_int_num(int *a, int *b){
+    int k;
+    k = *a;
+    *a = *b;
+    *b = k;
 }
 
 void get_road_imformation(char *path,int *road_num, Road **road){
@@ -124,17 +188,17 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         }
         str = StrLine;
         get_next_int(&str, &((*road)[i].id));
-        get_next_int(&str, &((*road)[i].lenth));
+        get_next_int(&str, &((*road)[i].length));
         get_next_int(&str, &((*road)[i].limit));
-        get_next_int(&str, &((*road)[i].ways));
-        get_next_int(&str, &((*road)[i].cross_id_strat));
+        get_next_int(&str, &((*road)[i].lanes_num));
+        get_next_int(&str, &((*road)[i].cross_id_start));
         get_next_int(&str, &((*road)[i].cross_id_end));
         get_next_int(&str, &((*road)[i].bothway));
-        (*road)[i].capacity = (*road)[i].ways * (*road)[i].lenth;
+        (*road)[i].capacity = (*road)[i].lanes_num * (*road)[i].length;
         (*road)[i].forward_flow_num = 0;
         (*road)[i].back_flow_num = 0;
-        new_a_road_content(&((*road)[i]));
-
+        new_a_road_road_que(&((*road)[i]));
+        road_map[(*road)[i].id] = (*road)[i];
         i++;
     }
     fclose(fp1);
@@ -165,31 +229,44 @@ int get_next_int(char **str, int *num){
     return SUCCESSFUL;
 }
 
-void sort_car_by_speed(Car *car, int car_num){          //todo
-
+void sort_car_by_speed(Car *car, int car_num){          //按照速度排序速度慢的在前
+    int car_sort[11];
+    int i;
+	car_sort_by_speed = (Car **)malloc(sizeof(Car*)*(car_num));
+    car_sort[0] = car_classified[0];
+    for(i = 1; i < 11; i++){
+		car_sort[i] = car_classified[i-1] + car_sort[i-1];
+	}
+	for(i = 0; i < car_num; i++){
+		car_sort_by_speed[car_sort[car[i].speed]] = &(car[i]);
+		car_sort[car[i].speed]++;
+	}
 }
 
-void new_a_road_content(Road *road){                    //建立道路供车辆行驶
+void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶
     int i, j;
-    if(road->bothway == 1){ 
-        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        road->back_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
-            road->back_content[i] = (Car **)malloc(sizeof(Car)*road->lenth);
-            for(j = 0; j < road->lenth; j++)
+    if(road->bothway == 1){
+        road->forward = (road_que *)malloc(sizeof(road_que)); 
+        road->back = (road_que *)malloc(sizeof(road_que)); 
+        road->forward->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        road->back->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        for(i = 0;i < road->lanes_num; i++){
+            road->forward->room[i] = (Car **)malloc(sizeof(Car)*road->length);
+            road->back->room[i] = (Car **)malloc(sizeof(Car)*road->length);
+            for(j = 0; j < road->length; j++)
             {
-                road->forward_content[i][j] = NOCAR;
-                road->back_content[i][j] = NOCAR;
+                road->forward->room[i][j] = NOCAR;
+                road->back->room[i][j] = NOCAR;
             }  
         }
     } else {
-        road->forward_content = (Car ***)malloc(sizeof(Car**)*road->ways);  
-        for(i = 0;i < road->ways; i++){
-            road->forward_content[i] = (Car **)malloc(sizeof(Car*)*road->lenth);
-            for(j = 0; j < road->lenth; j++)
+        road->forward = (road_que *)malloc(sizeof(road_que)); 
+        road->forward->room = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
+        for(i = 0;i < road->lanes_num; i++){
+            road->forward->room[i] = (Car **)malloc(sizeof(Car*)*road->length);
+            for(j = 0; j < road->length; j++)
             {
-                road->forward_content[i][j] = NOCAR;
+                road->forward->room[i][j] = NOCAR;
             }  
         }
     }

@@ -8,6 +8,12 @@
 #include "topology.h"
 #include "output_file.h"
 #include "run_road.h"
+
+hash_map<int, Road> road_map;
+hash_map<int, Cross> cross_map;
+unsigned int time = 0;
+Car **car_sort_by_speed;
+int lock = 1;
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;
@@ -58,5 +64,6 @@ int main(int argc, char *argv[])
 	// TODO:process
 	// TODO:write output file
 	
+
 	return 0;
 }

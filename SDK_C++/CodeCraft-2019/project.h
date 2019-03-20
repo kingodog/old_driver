@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "read_file.h"
 #include "topology.h"
 #include "run_road.h"
 #include "car.h"
@@ -17,4 +16,5 @@ void free_a_matrix(int **matrix, int n);
 void reset_flow(Road *road, int road_num);
 void reset_back_flow(Road *road, int road_num);
 void reset_forward_flow(Road *road, int road_num);
+int get_next_road(int start, int end, Cross *cross);
 #endif

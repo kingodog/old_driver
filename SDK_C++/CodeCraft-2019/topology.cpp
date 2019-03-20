@@ -23,16 +23,16 @@ int ** build_weight_matrix(Cross *cross, Road *road, int cross_num, int  road_nu
 int get_road_weight(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值
     int i;
     for(i = 0; i < road_num; i++){
-        if(road[i].cross_id_strat == start_id && road[i].cross_id_end == end_id){
-            return ceil(float(road[i].lenth) / get_min(speed, road[i].limit));                                    
-        }   else if (road[i].cross_id_strat == end_id && road[i].cross_id_end == start_id && road[i].ways == 1){
-            return ceil(float(road[i].lenth) / get_min(speed, road[i].limit)); 
+        if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
+            return ceil(float(road[i].length) / get_min(speed, road[i].limit));                                    
+        }   else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
+            return ceil(float(road[i].length) / get_min(speed, road[i].limit)); 
         }
     }
     return NO_CONNECT;
 }
 
-int ** build_capacity_matrix_by_ways(Cross *cross, Road *road, int cross_num, int  road_num){
+int ** build_capacity_matrix_by_lanes_num(Cross *cross, Road *road, int cross_num, int  road_num){
     int **capacity_matrix;
     int i, j;
     capacity_matrix = (int**)malloc(sizeof(int*)*cross_num);  
@@ -55,10 +55,10 @@ int ** build_capacity_matrix_by_ways(Cross *cross, Road *road, int cross_num, in
 int get_road_capacity_by_ways(int start_id, int end_id, Road *road, int road_num){             //根据道路宽度确定容量
     int i;
     for(i = 0; i < road_num; i++){
-        if(road[i].cross_id_strat == start_id && road[i].cross_id_end == end_id){
-            return (road[i].ways);                                    
-        } else if (road[i].cross_id_strat == end_id && road[i].cross_id_end == start_id && road[i].ways == 1){
-            return (road[i].ways);   
+        if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
+            return (road[i].lanes_num);                                    
+        } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
+            return (road[i].lanes_num);   
         }
     }
     return NO_CONNECT;
@@ -88,10 +88,10 @@ int ** build_cost_matrix_by_length(Cross *cross, Road *road, int cross_num, int 
 int get_road_cost_by_length(int start_id, int end_id, Road *road, int road_num){             //根据道路宽度确定容量
     int i;
     for(i = 0; i < road_num; i++){
-        if(road[i].cross_id_strat == start_id && road[i].cross_id_end == end_id){
-            return (road[i].lenth);                                    
-        } else if (road[i].cross_id_strat == end_id && road[i].cross_id_end == start_id && road[i].ways == 1){
-            return (road[i].lenth);   
+        if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
+            return (road[i].length);                                    
+        } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
+            return (road[i].length);   
         }
     }
     return NO_CONNECT;

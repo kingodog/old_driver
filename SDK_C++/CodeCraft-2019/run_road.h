@@ -38,4 +38,15 @@ typedef struct {
     Road_que *back;
 } Road;
 
+Road_que *init_road_que(int columns_num, int rows_num);
+void destroy_road_que(Road_que *que);
+bool que_is_empty(Road_que *que);
+bool que_is_full(Road_que *que);
+bool enqueue(Road *road, Car *car, int real_speed, int dir);
+Car *dequeue(Road *road, int dir);
+void pass_through(Road_que *que, int curr_row, int curr_column, int real_speed);
+void set_head(Road *road);
+void set_tail(Road *road);
+void set_cars_status(Road *road);
+
 #endif

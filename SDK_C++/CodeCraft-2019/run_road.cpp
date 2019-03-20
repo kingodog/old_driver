@@ -104,9 +104,9 @@ void pass_through(Road_que *que, int curr_row, int curr_column, int real_speed){
     que->lanes[curr_row][curr_column] = NULL;
 }
 
-int get_real_speed(Road *road, Car *car, int curr_column, int block){
-    return MIN(MIN(road->limit, car->speed), curr_column - block);
-}
+// int get_real_speed(Road *road, Car *car, int curr_column, int block){
+//     return MIN(MIN(road->limit, car->speed), curr_column - block);
+// }
 
 void set_head(Road *road){
     int i, j, k;

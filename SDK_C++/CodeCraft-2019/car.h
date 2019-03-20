@@ -3,7 +3,9 @@
 
 #define  CAR_MAX_RECORD (100)
 
-
+#define UNBORN          (0)
+#define READY           (1)
+#define WAIT            (2)
 #define END             (3)
 #define ARRIVE          (4)
 

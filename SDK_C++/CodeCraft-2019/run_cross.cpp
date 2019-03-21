@@ -16,7 +16,7 @@ void put_car(Car *car, Road *road, Cross *cross){
     int next_step;
     CarList *p;
     p = carlist;
-    road_que *que;
+    Road_que *que;
     while(running_car_num <= RUNNING_MAX_NUM || P !=NULL){
         // next_step = get_next_road(p->car->start, p->car->end, road, cross);
         if(p->car->start == road_map[next_step].cross_id_start){
@@ -87,7 +87,7 @@ void run_all_cross(Cross *cross, int cross_num){
 
 void project_cross_waiting_car(Cross *cross){
     // int i,j,k;
-    // road_que *road[4];
+    // Road_que *road[4];
     // for(i = 0; i < cross->total_road; i++){
     //     if(road_map[cross->road_id_sorted[i]].cross_id_start == cross->id){
     //         road[i] = road_map[cross->road_id_sorted[i]].back;
@@ -107,7 +107,7 @@ void project_cross_waiting_car(Cross *cross){
 void run_a_cross(Cross *cross){
     int end_flag = 0;
     int i;
-    road_que *road[4];
+    Road_que *road[4];
     for(i = 0; i < cross->total_road; i++){
         if(road_map[cross->road_id_sorted[i]].cross_id_start == cross->id){
             road[i] = road_map[cross->road_id_sorted[i]].back;
@@ -124,7 +124,7 @@ void run_a_cross(Cross *cross){
     }    
 }
 
-int run_a_road(Cross *cross, road_que *way, Road *road){
+int run_a_road(Cross *cross, Road_que *way, Road *road){
     int i, j;
     Car *car_p;
     Car *forward_car = NULL;
@@ -208,7 +208,7 @@ int run_a_road(Cross *cross, road_que *way, Road *road){
 
 Car *get_left_road_first_car(Cross * corss, int self_road_id){
     int i;
-    road_que *left_input;
+    Road_que *left_input;
     for( i = 0; i < 4; i++)
     {
         if(corss->road_id[i] = self_road_id){
@@ -229,7 +229,7 @@ Car *get_left_road_first_car(Cross * corss, int self_road_id){
 
 Car *get_right_road_first_car(Cross * corss, int self_road_id){
     int i;
-    road_que *right_input;
+    Road_que *right_input;
     for( i = 0; i < 4; i++)
     {
         if(corss->road_id[i] = self_road_id){
@@ -250,7 +250,7 @@ Car *get_right_road_first_car(Cross * corss, int self_road_id){
 
 Car *get_across_road_first_car(Cross * corss, int self_road_id){
     int i;
-    road_que *across_input;
+    Road_que *across_input;
     for( i = 0; i < 4; i++)
     {
         if(corss->road_id[i] = self_road_id){

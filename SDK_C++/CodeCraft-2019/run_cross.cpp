@@ -1,5 +1,8 @@
 #include "run_cross.h"
 #include "read_file.h"
+
+#define ALPHA    (float(1))
+
 extern hash_map<int, Road> road_map;
 extern hash_map<int, Cross> cross_map;
 
@@ -9,36 +12,48 @@ extern unsigned int time;
 extern int lock ;
 extern int running_car_num;
 
-int all_car_end = 0;
-int end_put_car = 0;
+extern int all_car_end ;
+extern int end_put_car ;
+
+extern int map_capacity;
+extern int surplus_map_capacity;
 
 void put_car(Car *car, Road *road, Cross *cross){
     int next_step;
     CarList *p;
     p = carlist;
     Road_que *que;
-    while(running_car_num <= RUNNING_MAX_NUM || P !=NULL){
-        // next_step = get_next_road(p->car->start, p->car->end, road, cross);
+    int capacity_conversion = map_capacity * ALPHA;
+    while(surplus_map_capacity <= capacity_conversion || P !=NULL){
+        // next_step = get_next_road(p->car->start, p->car->end, road, cross, p->car->speed);
+        if(next_step == -1){
+             p = p->next;
+             continue;
+        }
+
         if(p->car->start == road_map[next_step].cross_id_start){
             que = road_map[next_step].forward;
         } else {
             que = road_map[next_step].back;
         }
+
         if(!is_full(que)){
-            //放入车   //todo
+            //放入车   //todo  //路的容量
+            
             p->car->project->start_time = time;
             p->car->status = END;
             car_new_a_project_road(p->car, next_step);
             p->car->next_step = -1;
             p->car->next_dir = -1;
-            p = p->next;
             delete_car_from_list(&p);   //函数包括了p=p->next;
+            map_capacity = map_capacity - MIN(p->car->speed, road_map[next_step].limit);
             running_car_num ++;
         } else {
             p = p->next;
         }
 
     }
+
     time++;
     
 }
@@ -136,42 +151,43 @@ int run_a_road(Cross *cross, Road_que *way, Road *road){
 
     for(i = 0; i < road->length; i++){
         for(j = 0; j < road->lanes_num){
-            switch (way->room[i][j]->status)
+            switch (way->lanes[i][j]->status)
             {
                 case WAIT:
                     for(distance = 1; distance <= i; distance++){
-                        if(way->room[i - distance][j] != NULL){
-                            forward_car = way->room[i][j];
+                        if(way->lanes[i - distance][j] != NULL){
+                            forward_car = way->lanes[i][j];
                             break;
                         }
                     }
                     if( forward_car == NULL){                   //无遮挡
                         distance = i;
-                        speed = get_min(way->room[i][j]->speed, road->limit);
+                        speed = get_min(way->lanes[i][j]->speed, road->limit);
                         if(speed <= distance){                      //不过路口
                             //前进
                             //todo
-                            way->room[i][j]->status = END;
-                        } else if (way->room[i][j]->next_dir == -1){            //此路口为终点
-                            way->room[i][j]->status = END;
-                            way->room[i][j] = NULL;
+                            way->lanes[i][j]->status = END;
+                        } else if (way->lanes[i][j]->next_dir == -1){            //此路口为终点
+                            way->lanes[i][j]->status = END;
+                            way->lanes[i][j] = NULL;
                             running_car_num --;
+                            map_capacity = map_capacity + MIN(way->lanes[i][j]->speed, road.limit);
                             //... //todo
-                        } else if(way->room[i][j]->next_dir == STRAIGHT){
-                            // //放入车(way->room[i][j]->next_step)   //todo
+                        } else if(way->lanes[i][j]->next_dir == STRAIGHT){
+                            // //放入车(way->lanes[i][j]->next_step)   //todo
                             //..
                             //调整当前道的后车  
-                        } else if(way->room[i][j]->next_dir == LEFT){
+                        } else if(way->lanes[i][j]->next_dir == LEFT){
                             car_p = get_right_road_first_car(cross, road->id);
                             if(car_p !=NULL){       
                                 if(car_p->next_dir == STRAIGHT){   //有车子confict
                                     return ; 
                                 }
                             } 
-                            // //放入车(way->room[i][j]->next_step)   //todo    过路口
+                            // //放入车(way->lanes[i][j]->next_step)   //todo    过路口
                             //..
                             //调整当前道的后车                                
-                        } else if(way->room[i][j]->next_dir == RIGHT){
+                        } else if(way->lanes[i][j]->next_dir == RIGHT){
                             car_p = get_left_road_first_car(cross, road->id);
                             if(car_p !=NULL){       
                                 if(car_p->next_dir == STRAIGHT){ 
@@ -185,7 +201,7 @@ int run_a_road(Cross *cross, Road_que *way, Road *road){
                                 }
                             } 
 
-                            // //放入车(way->room[i][j]->next_step)   //todo    过路口
+                            // //放入车(way->lanes[i][j]->next_step)   //todo    过路口
                             //..
                             //调整当前道的后车                                  
                         }
@@ -223,7 +239,7 @@ Car *get_left_road_first_car(Cross * corss, int self_road_id){
     } else if( left_input->head[0] < 0){
         return NULL;
     } else {
-        return (left_input->room[left_input->head[0]][left_input->head[1]]);
+        return (left_input->lanes[left_input->head[0]][left_input->head[1]]);
     }
 }
 
@@ -244,7 +260,7 @@ Car *get_right_road_first_car(Cross * corss, int self_road_id){
     } else if( right_input->head[0] < 0){
         return NULL;
     } else {
-        return (right_input->room[right_input->head[0]][right_input->head[1]]);
+        return (right_input->lanes[right_input->head[0]][right_input->head[1]]);
     }
 }
 
@@ -265,7 +281,7 @@ Car *get_across_road_first_car(Cross * corss, int self_road_id){
     } else if( across_input->head[0] < 0){
         return NULL;
     } else {
-        return (across_input->room[across_input->head[0]][across_input->head[1]]);
+        return (across_input->lanes[across_input->head[0]][across_input->head[1]]);
     }
 }
 

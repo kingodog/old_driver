@@ -31,12 +31,17 @@ typedef struct {
     int bothway;
 
     int capacity;
-    int forward_flow_num;
-    int back_flow_num;
+    int forward_surplus_flow;
+    int back_surplus_flow;
+
+    int pre_forward_surplus_flow;
+    int pre_back_surplus_flow;
 
     Road_que *forward;
     Road_que *back;
 } Road;
+
+
 
 Road_que *init_road_que(int columns_num, int rows_num);
 void destroy_road_que(Road_que *que);

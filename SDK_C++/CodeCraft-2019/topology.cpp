@@ -1,6 +1,6 @@
 #include "topology.h"
 
-int ** build_weight_matrix(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
+int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
     int **weight_matrix;
     int i, j;
     weight_matrix = (int**)malloc(sizeof(int*)*cross_num);  
@@ -13,14 +13,60 @@ int ** build_weight_matrix(Cross *cross, Road *road, int cross_num, int  road_nu
             if(i == j){
                 weight_matrix[i][j] = 0;
             } else {
-                weight_matrix[i][j] = get_road_weight(cross[i].id, cross[j].id, road, road_num, speed);
+                weight_matrix[i][j] = get_road_weight_by_capacity(cross[i].id, cross[j].id, road, road_num, speed);
             }
         }
     }
     return weight_matrix;
 }
 
-int get_road_weight(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值
+int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值
+    int i;
+    float x;
+    for(i = 0; i < road_num; i++){
+        if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
+            if( pre_back_surplus_flow <= 0 ){
+                return NO_CONNECT;
+            }
+            x = (float)road[i].pre_back_surplus_flow / road[i].capacity;
+            return ceil(float(road[i].length) / get_min(speed, road[i].limit));                                    
+        } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
+            if( pre_back_surplus_flow <= 0 ){
+                return NO_CONNECT;
+            }
+            return ceil(float(road[i].length) / get_min(speed, road[i].limit)); 
+        }
+    }
+    return NO_CONNECT;
+}
+
+
+
+
+
+
+
+int ** build_weight_matrix_by_time(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
+    int **weight_matrix;
+    int i, j;
+    weight_matrix = (int**)malloc(sizeof(int*)*cross_num);  
+    for(i = 0; i < cross_num; i++){
+        weight_matrix[i] = (int*)malloc(sizeof(int)*cross_num); 
+    }
+
+    for(i = 0; i < cross_num; i++){
+        for(j = 0; j < cross_num; j++){
+            if(i == j){
+                weight_matrix[i][j] = 0;
+            } else {
+                weight_matrix[i][j] = get_road_weight_by_time(cross[i].id, cross[j].id, road, road_num, speed);
+            }
+        }
+    }
+    return weight_matrix;
+}
+
+int get_road_weight_by_time(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值
     int i;
     for(i = 0; i < road_num; i++){
         if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){

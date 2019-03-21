@@ -15,6 +15,12 @@ unsigned int time = 0;
 CarList *carlist;
 int lock = 1;
 int running_car_num = 0;
+int map_capacity = 0;
+int surplus_map_capacity = 0;
+
+int all_car_end = 0;
+int end_put_car = 0;
+
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;

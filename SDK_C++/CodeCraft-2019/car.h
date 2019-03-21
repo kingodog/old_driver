@@ -27,7 +27,17 @@ typedef struct
 
     int status;
 
+    int next_step;
+    int next_dir;
+
     CarProject *project;
 }Car;
+
+typedef struct 
+{
+    Car *car;
+    CarList *next;
+    CarList *last;
+}CarList;
 
 #endif

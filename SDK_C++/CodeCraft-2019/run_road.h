@@ -42,12 +42,13 @@ void destroy_road_que(Road_que *que);
 bool que_is_empty(Road_que *que);
 bool que_is_full(Road_que *que);
 bool enqueue(Road *road, Car *car, int real_speed, int dir);
+bool get_waiting_head(Road *road, int dir, int *pos);
 Car *dequeue(Road *road, int dir);
 void pass_through(Road_que *que, int curr_row, int curr_column, int columns_num, int real_speed);
 inline int get_min(int a, int b);
-//int get_real_speed(Road *road, Car *car, int curr_column, int block);
-void set_head(Road *road);
-void set_tail(Road *road);
-void set_cars_status(Road *road);
+void dispatch_cars_on_road(Road *road);
+// int get_real_speed(Road *road, Car *car, int curr_column, int block);
+// void set_head(Road *road);
+// void set_tail(Road *road);
 
 #endif

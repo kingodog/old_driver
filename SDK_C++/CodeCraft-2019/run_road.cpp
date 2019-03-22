@@ -8,6 +8,7 @@ void run_all_road(Road *road, int road_num){
     }
 }
 
+RoadQue *init_road_que(int columns_num, int rows_num){
     int i, j;
     RoadQue *que = (RoadQue *)malloc(sizeof(RoadQue));
     Car ***lanes = (Car ***)malloc(sizeof(Car **) * rows_num);
@@ -171,7 +172,7 @@ void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, 
 }
 
 inline int get_min(int a, int b){
-    return (a < b) ? a : b;
+    return ((a < b) ? a : b);
 }
 
 void dispatch_cars_on_road(Road *road){
@@ -191,7 +192,7 @@ void dispatch_cars_on_road(Road *road){
 
                 speed = get_min(get_min(road->limit, curr->speed), j - block - 1);
 
-                if(!prev){
+                if(!prev){                                                                  //todo
                     if((j - block - 1) < (get_min(road->limit, curr->speed))){
                         curr->status = WAIT;
                         block = j;
@@ -261,7 +262,7 @@ void dispatch_cars_on_road(Road *road){
 //     if(road->forward->lanes[0][9] == car1){
 //         printf("(0,9) has car1\n");
 //     }
-//     //进第二辆�
+//     //进第二辆车
 //     enqueue(road, car2, 2, FORWARD);
 //     assert(road->forward->lanes[1][8] == car2);
 //     if(road->forward->lanes[1][8] == car2){
@@ -293,9 +294,9 @@ void dispatch_cars_on_road(Road *road){
 //     if(road->forward->lanes[2][9] == car7){
 //         printf("(2,9) has car7\n");
 //     }
-//     //进第八辆车失�
+//     //进第八辆车失败
 //     enqueue(road, car8, 8, FORWARD);
-//     //行进并标记状�
+//     //行进并标记状态
 //     while(road->forward->lanes[road->forward->head[ROW]][road->forward->head[CLM]]->status != WAIT){
 //         dispatch_cars_on_road(road);
 //         for(int i = 0; i < road->lanes_num; i++){

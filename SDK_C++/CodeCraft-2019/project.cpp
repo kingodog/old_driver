@@ -1,27 +1,114 @@
 #include "project.h"
 
 extern unsigned int time;
+
 extern hash_map<int, Road> road_map;
 extern hash_map<int, Cross> cross_map;
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
     int no_car = 0;
-    int surplus_unborn_car_num = car_num;
+    time =10;
+    reset_all_pre_flow(road_num, road_num);
+    put_car(car, road, cross, ture, true);//第一次特殊，先加车
 
-    put_car(car, road, cross, ture, true);//第一次特殊，先加�
-
-    while(no_car == 0){       
-       run_all_road(road, road_num);
-       project_all_waiting_car(road, road_num, cross, cross_num);
-
-       no_car = put_car(car, road, cross, ture, true, &surplus_unborn_car_num)
-       
+    while(carlist != NULL){
+        run_all_road(road, road_num);
+        project_all_waiting_car(road, road_num, cross, cross_num);
+        run_all_cross(cross, cross_num);
+        reset_all_pre_flow(road_num, road_num);
+        put_car(car, road, cross, ture, true);
+        time ++;
     }
+
+    reset_all_pre_flow(road_num, road_num);
 
     while(running_car_num != 0){
-        
+        run_all_road(road, road_num);
+        project_all_waiting_car(road, road_num, cross, cross_num);
+        run_all_cross(cross, cross_num);
+        reset_all_pre_flow(road_num, road_num);
+        time ++;
     }
+
+    printf("\ntime = %d \n", time);
     return;
+}
+
+
+
+void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_num){
+    int i;
+    for(i = 0; i < road_num; i++)
+    {
+        project_a_road_waiting_car(&road[i], road, road_num, cross, cross_num);
+    }
+}
+
+void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num){
+    int i, j;
+
+    Car ***que = this_road->forward->lanes;
+    for( i = 0; i < this_road->lanes_num; i++)              //正向
+    {
+        for( j = 0; j < this_road->length; j++)
+        {
+            if(que[i][j] !=NULL){
+                if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit){
+                    que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
+                    if(que[i][j]->next_step == -1){             //到达目的地
+                        que[i][j]->next_dir = -1;
+                        this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
+                        continue;
+                    } else {
+                        que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                        this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
+                        if(road_map[que[i][j]->next_step].cross_id_start == this_road->cross_id_end){
+                            road_map[que[i][j]->next_step].pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                        } else {
+                            road_map[que[i][j]->next_step].pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                        }
+                    }
+                    
+                } else {
+                    break;                  //该条道路的后车就不用检测
+                }
+            }
+        }
+    }
+
+    if(this_road->bothway == 1){                             //反向
+        que = this_road->back->lanes;
+        for( i = 0; i < this_road->lanes_num; i++)
+        {
+            for( j = 0; j < this_road->length; j++)
+            {
+                if(que[i][j] !=NULL){
+                    if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
+                        que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
+                        if(que[i][j]->next_step == -1){             //到达目的地
+                            que[i][j]->next_dir = -1;
+                            this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit)
+                            continue;
+                        } else {
+                            que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                            this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
+                            if(road_map[que[i][j]->next_step].cross_id_start == this_road->cross_id_start){
+                                road_map[que[i][j]->next_step].pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                            } else {
+                                road_map[que[i][j]->next_step].pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                            }
+                        }
+                        
+                    } else {
+                        break;                  //该条道路的后车就不用检测
+                    }
+                }
+            }
+        }
+
+
+    }
+    
 }
 
 
@@ -75,71 +162,15 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     //TODO:通过下一个路口得到下一条路
 }
 
-void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num){
-    int i, j;
-    Car ***que = this_road->forward->lanes;
-
-
-    for( i = 0; i < this_road->lanes_num; i++)
-    {
-        for( j = 0; j < this_road->length; j++)
-        {
-            if(que[i][j] !=NULL){
-                if(que[i][j]->status == WAIT && i < que[i][j]->speed){
-                    que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
-                    if(que[i][j]->next_step == -1){             //到达目的�
-                        que[i][j]->next_dir = -1;
-                        this_road->pre_forward_surplus_flow -=que[i][j]->speed;
-                        continue;
-                    } else {
-                        que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
-                        this_road->pre_forward_surplus_flow -=que[i][j]->speed;
-                        road_map[que[i][j]->next_step].
-                    }   
-                    
-                } else {
-                    break;                  //该条道路的后车就不用检�
-                }
-            }
-        }
-    }
-
-
-    if(road->bothway == 1){
-        que = this_road->back->lanes;
 
 
 
-    }
-    
-}
-
-int **new_a_int_matrix(int n){
-    int **matrix;
-    int i;
-    matrix = (int **)malloc(sizeof(int*)*n);  
-    for(i = 0; i < n; i++){
-        matrix[i] = (int*)malloc(sizeof(int)*n); 
-    }
-    return matrix;
-}
-
-void free_a_matrix(int **matrix, int n){
-    int i;
-    for(i = 0; i < n; i++){
-        free(matrix[i]); 
-    }
-    free(matrix);
-}
 
 int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){
-    free_a_matrix(weight_matrix);
-}
-
     int ***iteration_matrix;
     int ***precursor_matrix; 
     int i, j, k, l, m;
-    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（�个）
+    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（第0个）
     precursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));  
     for(k = 0; k < cross_num + 1; k++){
         iteration_matrix[k] = new_a_int_matrix(cross_num);  
@@ -182,7 +213,22 @@ int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){
     return precursor_matrix[cross_num];
 }
 
+int **new_a_int_matrix(int n){
+    int **matrix;
+    int i;
+    matrix = (int **)malloc(sizeof(int*)*n);  
+    for(i = 0; i < n; i++){
+        matrix[i] = (int*)malloc(sizeof(int)*n); 
+    }
+    return matrix;
+}
 
+void free_a_matrix(int **matrix, int n){
+    int i;
+    for(i = 0; i < n; i++){
+        free(matrix[i]); 
+    }
+    free(matrix);
 }
 
 void reset_all_pre_flow(Road *road, int road_num){
@@ -191,29 +237,4 @@ void reset_all_pre_flow(Road *road, int road_num){
         road[i].pre_forward_surplus_flow = road[i].forward_surplus_flow;
         road[i].pre_back_surplus_flow = road[i].back_surplus_flow;
     }
-
-// void reset_flow(Road *road, int road_num){
-//     int i;
-//     for(i = 0; i < road_num; i++){
-//         road[i].forward_surplus_flow = 0;
-//         road[i].back_surplus_flow = 0;
-//     }
-// }
-
-// void reset_back_flow(Road *road, int road_num){
-//     int i;
-//     for(i = 0; i < road_num; i++){
-//         road[i].back_flow_num = 0;
-//     }
-// }
-
-// void reset_forward_flow(Road *road, int road_num){
-//     int i;
-//     for(i = 0; i < road_num; i++){
-//         road[i].forward_flow_num = 0;
-//     }
-// }
-
-// int get_next_road(int start, int end, Cross *cross){                //todo
-//     return 1;
-// }
+}

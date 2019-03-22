@@ -24,7 +24,7 @@ void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
     char StrLine[1024];
     char *str;
     int i=0;
-    for(i = 0; i < 10; i++){     //初始化数�
+    for(i = 0; i < 10; i++){     //初始化数组;
         car_classified[i] = 0;
     }
     
@@ -41,7 +41,7 @@ void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
         }
     }
 
-    *car_num = i;                 //包含无效�
+    *car_num = i;                 //包含无效行
     (*car) = (Car *)malloc(sizeof(Car)*(*car_num));
     i=0;
     fseek(fp1, 0, 0);
@@ -85,7 +85,7 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
         }
     }
 
-    *cross_num = i;                 //包含无效�
+    *cross_num = i;                 //包含无效行
     (*cross)=(Cross *)malloc(sizeof(Cross)*(*cross_num));
     i=0;
     fseek(fp1, 0, 0);
@@ -109,7 +109,7 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
                 (*cross)[i].road[k] = NULL;
             } else {
                 (*cross)[i].road[k] = &(road_map[(*cross)[i].road_id[k]]);
-                if(road_map[(*cross)[i].road_id[k]].cross_id_start == (*cross)[i].id){   //特别注意�
+                if(road_map[(*cross)[i].road_id[k]].cross_id_start == (*cross)[i].id){   //特别注意，
                     if(road_map[(*cross)[i].road_id[k]].bothway == 1){
                         (*cross)[i].road_dir[k] == road_map[(*cross)[i].road_id[k]].back;
                         (*cross)[i].road_dir_out[k] == road_map[(*cross)[i].road_id[k]].forward;
@@ -208,7 +208,7 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         }
     }
 
-    *road_num = i;                 //包含无效�
+    *road_num = i;                 //包含无效行
     (*road)=(Road *)malloc(sizeof(Road)*(*road_num));
     i=0;
     fseek(fp1, 0, 0);
@@ -233,7 +233,7 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         (*road)[i].forward_surplus_flow = (*road)[i].capacity;
         (*road)[i].pre_forward_surplus_flow = (*road)[i].capacity;
         if((*road)[i].bothway == 1){
-            map_capacity + = (*road)[i].capacity*2;         //调整全体地图的全体容�
+            map_capacity + = (*road)[i].capacity*2;         //调整全体地图的全体容量
             (*road)[i].back_surplus_flow = (*road)[i].capacity;
             (*road)[i].pre_back_surplus_flow = (*road)[i].capacity;
         } else {
@@ -255,9 +255,9 @@ int get_next_int(char **str, int *num){
     char *data; 
     char str_num[1024];
     char a = data[j];
-    data =  *str;                                              //指向 字符�
+    data =  *str;                                              //指向 字符串
     while(((data[j] < '0')||(data[j] > '9'))&&(data[j] != '-')){
-        if(data[j] == '\0'){            //无效�
+        if(data[j] == '\0'){            //无效行
             return DEFEATED;
         }
         j++;
@@ -271,7 +271,7 @@ int get_next_int(char **str, int *num){
     }
     str_num[k] = '\0';
     *num = atoi(str_num);
-    *str = &data[i];            //改变指针位置，为下一次读取准�
+    *str = &data[i];            //改变指针位置，为下一次读取准备
     return SUCCESSFUL;
 }
 
@@ -286,7 +286,7 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
     carlist = (CarList *)malloc(sizeof(CarList));
     carlist_sroted = (CarList *)malloc(sizeof(CarList));
 
-    p = carlist;                                        //一个按照速度排序，一个没�
+    p = carlist;                                        //一个按照速度排序，一个没有
     p_sorted = carlist_sroted;                  
 
     car_sort[0] = car_classified[0];
@@ -304,7 +304,7 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
     p->car = &(car[0]);
     p->last = NULL;
 
-    for(i = 1; i < car_num; i++){               //装到对应链表�
+    for(i = 1; i < car_num; i++){               //装到对应链表里
 		p_sorted->next = (CarList *)malloc(sizeof(CarList));
         p_sorted->next->last = p_sorted;
         p_sorted = p_sorted->next;
@@ -335,7 +335,7 @@ void delete_car_from_list(CarList **p){
 }
 
 
-void new_a_road_road_que(Road *road){                    //建立道路供车辆行�
+void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶
     if(road->bothway == 1){
         road->forward = init_road_que(road->length, road->lanes_num);
         road->back = init_road_que(road->length, road->lanes_num);

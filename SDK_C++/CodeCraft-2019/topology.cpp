@@ -142,11 +142,3 @@ int get_road_cost_by_length(int start_id, int end_id, Road *road, int road_num){
     }
     return NO_CONNECT;
 }
-
-int get_min(int a, int b){
-    if( a > b ){
-        return b;
-    } else {
-        return a;
-    }
-}

@@ -8,7 +8,7 @@
 #include "run_cross.h"
 
 #define NO_CONNECT              INFINITY_INT
-#define INFINITY_INT            (0x1<<29)
+#define INFINITY_INT            (0x1<<20)
 #define NIL                     (-1)
 // #define NO_CONNECT              (-1)
 
@@ -23,6 +23,6 @@ int get_road_capacity_by_ways(int start_id, int end_id, Road *road, int road_num
 int ** build_cost_matrix_by_length(Cross *cross, Road *road, int cross_num, int  road_num);
 int get_road_cost_by_length(int start_id, int end_id, Road *road, int road_num);
 
-int get_min(int a, int b);
+
 
 #endif

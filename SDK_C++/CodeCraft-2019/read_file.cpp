@@ -1,6 +1,7 @@
 #include "read_file.h"
 
 extern CarList *carlist;
+extern CarList *carlist_sroted;
 int car_classified[11];
 
 extern hash_map<int, Road> road_map;
@@ -14,7 +15,7 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
     get_road_imformation(road_path, road_num, road);            //不可改变先后顺序
     get_cross_imformation(cross_path,cross_num, cross);
     get_car_imformation(car_path,car_num, car, road_num);
-    sort_car_by_speed(*car, *car_num);
+    sort_car_by_speed_and_creat_list(*car, *car_num);
 }
 
 void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
@@ -274,13 +275,20 @@ int get_next_int(char **str, int *num){
     return SUCCESSFUL;
 }
 
-void sort_car_by_speed(Car *car, int car_num){          //按照速度排序速度慢的在前
+void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照速度排序速度慢的在前
     int car_sort[11];
     int i;
+
     CarList *p;
+    CarList *p_sorted;
+
     Car ** car_sort_by_speed = (Car **)malloc(sizeof(Car*)*(car_num));
     carlist = (CarList *)malloc(sizeof(CarList));
-    p = carlist;
+    carlist_sroted = (CarList *)malloc(sizeof(CarList));
+
+    p = carlist;                                        //一个按照速度排序，一个没有
+    p_sorted = carlist_sroted;                  
+
     car_sort[0] = car_classified[0];
     for(i = 1; i < 11; i++){
 		car_sort[i] = car_classified[i-1] + car_sort[i-1];
@@ -290,14 +298,26 @@ void sort_car_by_speed(Car *car, int car_num){          //按照速度排序速�
 		car_sort[car[i].speed]++;
 	}
 
-    p->car = car_sort_by_speed[0];
+    p_sorted->car = car_sort_by_speed[0];
+    p_sorted->last = NULL;
+
+    p->car = &(car[0]);
     p->last = NULL;
-    for(i = 1; i < car_num; i++){               //把排序好的车子 装到链表里
-		p->next = (CarList *)malloc(sizeof(CarList));
+
+    for(i = 1; i < car_num; i++){               //装到对应链表里
+		p_sorted->next = (CarList *)malloc(sizeof(CarList));
+        p_sorted->next->last = p_sorted;
+        p_sorted = p_sorted->next;
+        p_sorted->last;
+        p_sorted->car =  car_sort_by_speed[i];
+        p_sorted->next=NULL;
+
+
+        p->next = (CarList *)malloc(sizeof(CarList));
         p->next->last = p;
-        p=p->next;
+        p = p->next;
         p->last;
-        p->car =  car_sort_by_speed[i];
+        p->car =  &(car[i]);
         p->next=NULL;
 	}
 }
@@ -316,30 +336,10 @@ void delete_car_from_list(CarList **p){
 
 
 void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶
-    int i, j;
     if(road->bothway == 1){
-        road->forward = (Road_que *)malloc(sizeof(Road_que)); 
-        road->back = (Road_que *)malloc(sizeof(Road_que)); 
-        road->forward->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
-        road->back->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
-        for(i = 0;i < road->lanes_num; i++){
-            road->forward->lanes[i] = (Car **)malloc(sizeof(Car)*road->length);
-            road->back->lanes[i] = (Car **)malloc(sizeof(Car)*road->length);
-            for(j = 0; j < road->length; j++)
-            {
-                road->forward->lanes[i][j] = NOCAR;
-                road->back->lanes[i][j] = NOCAR;
-            }  
-        }
+        road->forward = init_road_que(road->length, road->lanes_num);
+        road->back = init_road_que(road->length, road->lanes_num);
     } else {
-        road->forward = (Road_que *)malloc(sizeof(Road_que)); 
-        road->forward->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
-        for(i = 0;i < road->lanes_num; i++){
-            road->forward->lanes[i] = (Car **)malloc(sizeof(Car*)*road->length);
-            for(j = 0; j < road->length; j++)
-            {
-                road->forward->lanes[i][j] = NOCAR;
-            }  
-        }
+        road->forward = init_road_que(road->length, road->lanes_num);
     }
 }

@@ -7,6 +7,8 @@ extern hash_map<int, Road> road_map;
 extern hash_map<int, Cross> cross_map;
 
 extern CarList *carlist;
+extern CarList *carlist_sroted;
+
 extern unsigned int time;
 
 extern int lock ;
@@ -18,7 +20,7 @@ extern int end_put_car ;
 extern int map_capacity;
 extern int surplus_map_capacity;
 
-void put_car(Car *car, Road *road, Cross *cross){
+void put_car(Car *car, Road *road, Cross *cross, bool time_up, int *surplus_unborn_car_num){
     int next_step;
     CarList *p;
     p = carlist;
@@ -48,13 +50,15 @@ void put_car(Car *car, Road *road, Cross *cross){
             delete_car_from_list(&p);   //函数包括了p=p->next;
             map_capacity = map_capacity - MIN(p->car->speed, road_map[next_step].limit);
             running_car_num ++;
+            (*surplus_unborn_car_num)--;
         } else {
             p = p->next;
         }
 
     }
-
-    time++;
+    if(time_up){
+        time++;
+    }
     
 }
 
@@ -86,6 +90,7 @@ void car_new_a_project_road(Car *car, int road_id){
     }
 }
     project_cross_waiting_car(&(cross[i]);
+
 void run_all_cross(Cross *cross, int cross_num){
     int i;
     while(all_car_end == 0){
@@ -218,7 +223,6 @@ int run_a_road(Cross *cross, Road_que *way, Road *road){
             }
         }
     }
-
 
 }
 

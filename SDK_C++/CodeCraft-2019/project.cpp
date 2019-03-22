@@ -1,21 +1,88 @@
 #include "project.h"
 
 extern unsigned int time;
+extern hash_map<int, Road> road_map;
+extern hash_map<int, Cross> cross_map;
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
+    int no_car = 0;
+    int surplus_unborn_car_num = car_num;
+
+    put_car(car, road, cross, ture, true);//第一次特殊，先加车
+
+    while(no_car == 0){       
+       run_all_road(road, road_num);
+       project_all_waiting_car(road, road_num, cross, cross_num);
+
+       no_car = put_car(car, road, cross, ture, true, &surplus_unborn_car_num)
+       
+    }
+
+    while(running_car_num != 0){
         
-    
+    }
     return;
 }
 
 
-int get_next_road(int start, int end, Road *road, Cross *cross, int speed){
 
+void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_num){
+    int i;
+    for(i = 0; i < road_num; i++)
+    {
+        project_a_road_waiting_car(&road[i]);
+    }
+}
+
+void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num){
+    int i, j;
+    Car ***que = this_road->forward->lanes;
+
+
+    for( i = 0; i < this_road->lanes_num; i++)
+    {
+        for( j = 0; j < this_road->length; j++)
+        {
+            if(que[i][j] !=NULL){
+                if(que[i][j]->status == WAIT && i < que[i][j]->speed){
+                    que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
+                    if(que[i][j]->next_step == -1){             //到达目的地
+                        que[i][j]->next_dir = -1;
+                        this_road->pre_forward_surplus_flow -=que[i][j]->speed;
+                        continue;
+                    } else {
+                        que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                        this_road->pre_forward_surplus_flow -=que[i][j]->speed;
+                        road_map[que[i][j]->next_step].
+                    }   
+                    
+                } else {
+                    break;                  //该条道路的后车就不用检测
+                }
+            }
+        }
+    }
+
+
+    if(road->bothway == 1){
+        que = this_road->back->lanes;
+
+
+
+    }
+    
 }
 
 
+int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed){
+    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
+    //todo
 
 
+
+
+    free_a_matrix(weight_matrix);
+}
 
 
 
@@ -89,6 +156,14 @@ void free_a_matrix(int **matrix, int n){
         free(matrix[i]); 
     }
     free(matrix);
+}
+
+void reset_all_pre_flow(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++){
+        road[i].pre_forward_surplus_flow = road[i].forward_surplus_flow;
+        road[i].pre_back_surplus_flow = road[i].back_surplus_flow;
+    }
 }
 
 // void reset_flow(Road *road, int road_num){

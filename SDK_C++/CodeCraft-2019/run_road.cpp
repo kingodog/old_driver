@@ -1,5 +1,13 @@
 #include "run_road.h"
 
+void run_all_road(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++)
+    {
+        dispatch_cars_on_road(&(road[i]))
+    }
+}
+
 Road_que *init_road_que(int columns_num, int rows_num){
     int i, j;
     Road_que *que = (Road_que *)malloc(sizeof(Road_que));

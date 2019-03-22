@@ -1,6 +1,13 @@
 #include "run_road.h"
 
-RoadQue *init_road_que(int columns_num, int rows_num){
+void run_all_road(Road *road, int road_num){
+    int i;
+    for(i = 0; i < road_num; i++)
+    {
+        dispatch_cars_on_road(&(road[i]))
+    }
+}
+
     int i, j;
     RoadQue *que = (RoadQue *)malloc(sizeof(RoadQue));
     Car ***lanes = (Car ***)malloc(sizeof(Car **) * rows_num);
@@ -254,7 +261,7 @@ void dispatch_cars_on_road(Road *road){
 //     if(road->forward->lanes[0][9] == car1){
 //         printf("(0,9) has car1\n");
 //     }
-//     //进第二辆车
+//     //进第二辆�
 //     enqueue(road, car2, 2, FORWARD);
 //     assert(road->forward->lanes[1][8] == car2);
 //     if(road->forward->lanes[1][8] == car2){
@@ -286,9 +293,9 @@ void dispatch_cars_on_road(Road *road){
 //     if(road->forward->lanes[2][9] == car7){
 //         printf("(2,9) has car7\n");
 //     }
-//     //进第八辆车失败
+//     //进第八辆车失�
 //     enqueue(road, car8, 8, FORWARD);
-//     //行进并标记状态
+//     //行进并标记状�
 //     while(road->forward->lanes[road->forward->head[ROW]][road->forward->head[CLM]]->status != WAIT){
 //         dispatch_cars_on_road(road);
 //         for(int i = 0; i < road->lanes_num; i++){

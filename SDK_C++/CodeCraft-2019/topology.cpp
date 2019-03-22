@@ -28,13 +28,13 @@ int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_n
             if( pre_back_surplus_flow <= 0 ){
                 return NO_CONNECT;
             }
-            x = (float)road[i].pre_back_surplus_flow / road[i].capacity;
-            return ceil(float(road[i].length) / get_min(speed, road[i].limit));                                    
+            x = (float)road[i].capacity/road[i].pre_back_surplus_flow;
+            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);                                    
         } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
             if( pre_back_surplus_flow <= 0 ){
                 return NO_CONNECT;
             }
-            return ceil(float(road[i].length) / get_min(speed, road[i].limit)); 
+            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);    
         }
     }
     return NO_CONNECT;

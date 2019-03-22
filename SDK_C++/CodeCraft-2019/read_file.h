@@ -41,7 +41,7 @@ void get_car_imformation(char *path,int *car_num, Car **car,int *road_num);
 void get_road_imformation(char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);
 void new_a_road_road_que(Road *road);
-void sort_car_by_speed(Car *car, int car_num);
+void sort_car_by_speed_and_creat_list(Car *car, int car_num);
 void delete_car_from_list(CarList *p);
 void sort_cross_road_id(Cross *cross);
 void exchange_int_num(int *a, int *b);

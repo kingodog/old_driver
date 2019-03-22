@@ -41,7 +41,7 @@ typedef struct {
 } Road;
 
 
-
+void run_all_road(Road *road, int road_num);
 RoadQue *init_road_que(int columns_num, int rows_num);
 void destroy_road_que(RoadQue *que);
 bool que_is_empty(RoadQue *que);

@@ -8,7 +8,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     int no_car = 0;
     int surplus_unborn_car_num = car_num;
 
-    put_car(car, road, cross, ture, true);//第一次特殊，先加�
+    put_car(car, road, cross, ture, true);//第一次特殊，先加�
 
     while(no_car == 0){       
        run_all_road(road, road_num);
@@ -24,24 +24,26 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     return;
 }
 
+
 //可以按照书上进行优化
+int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed){
     int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
-void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_num){
-    int i;
-    for(i = 0; i < road_num; i++)
-    {
-        project_a_road_waiting_car(&road[i]);
-    }
+    //todo
+    int dist[cross_num], prev[cross_num], flag[cross_num];
+    int i, j, k;
+    //初始化
+    for(i = 0; i < cross_num; i++){
+        dist[i] = INFINITY_INT;
         prev[i] = NIL;
         flag[i] = SIGNED;
     }
-    //找到start在cross数组中id，并初始化它的顶点属�
+    //找到start在cross数组中id，并初始化它的顶点属性
     int src_id = ((int)(&cross_map[start]) - (int)(cross))/sizeof(Cross);
     dist[src_id] = 0;
     flag[src_id] = UNSIGN;
-    //遍历除了start顶点的其他顶�
+    //遍历除了start顶点的其他顶点
     for(i = 0; i < cross_num - 1; i++){
-        //找到未标记的顶点的最短估计中最小�
+        //找到未标记的顶点的最短估计中最小者
         int min = INFINITY_INT;
         for(j = 0; j < cross_num; j++){
             if(flag[j] == UNSIGN && dist[j] < min){
@@ -64,6 +66,15 @@ void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_n
     }
     free_a_matrix(weight_matrix);
 
+    //找到end在cross数组中id
+    int end_id = ((int)(&cross_map[end]) - (int)(cross))/sizeof(Cross);
+    while(!prev[end_id]){
+        end_id = prev[end_id];
+    }
+    Cross next_cross = cross[end_id];
+    //TODO:通过下一个路口得到下一条路
+}
+
 void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num){
     int i, j;
     Car ***que = this_road->forward->lanes;
@@ -76,7 +87,7 @@ void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cr
             if(que[i][j] !=NULL){
                 if(que[i][j]->status == WAIT && i < que[i][j]->speed){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
-                    if(que[i][j]->next_step == -1){             //到达目的�
+                    if(que[i][j]->next_step == -1){             //到达目的�
                         que[i][j]->next_dir = -1;
                         this_road->pre_forward_surplus_flow -=que[i][j]->speed;
                         continue;
@@ -87,7 +98,7 @@ void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cr
                     }   
                     
                 } else {
-                    break;                  //该条道路的后车就不用检�
+                    break;                  //该条道路的后车就不用检�
                 }
             }
         }
@@ -102,11 +113,6 @@ void project_a_road_car(Road *this_road, Road *all_road, int road_num, Cross *cr
     }
     
 }
-
-
-int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed){
-    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
-    //todo
 
 int **new_a_int_matrix(int n){
     int **matrix;
@@ -126,27 +132,27 @@ void free_a_matrix(int **matrix, int n){
     free(matrix);
 }
 
-int ** get_prevursor_matrix_floyd(int **weight_matrix, int cross_num){
+int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){
     free_a_matrix(weight_matrix);
 }
 
     int ***iteration_matrix;
-    int ***prevursor_matrix; 
+    int ***precursor_matrix; 
     int i, j, k, l, m;
-    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（�个）
-    prevursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));  
+    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（�个）
+    precursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));  
     for(k = 0; k < cross_num + 1; k++){
         iteration_matrix[k] = new_a_int_matrix(cross_num);  
-        prevursor_matrix[k] = new_a_int_matrix(cross_num);  
+        precursor_matrix[k] = new_a_int_matrix(cross_num);  
     }
     
     for(i = 0; i < cross_num; i++){
         for(j=0; j < cross_num; j++){
             (iteration_matrix[0])[i][j] = weight_matrix[i][j];
             if((i == j) || (weight_matrix[i][j] == INFINITY_INT)){
-                prevursor_matrix[0][i][j] = NIL;
+                precursor_matrix[0][i][j] = NIL;
             } else {
-                prevursor_matrix[0][i][j] = i;
+                precursor_matrix[0][i][j] = i;
             }
         }
     }
@@ -156,9 +162,9 @@ int ** get_prevursor_matrix_floyd(int **weight_matrix, int cross_num){
             for(j = 0; j < cross_num; j++){
                 iteration_matrix[k][i][j] = get_min(iteration_matrix[k-1][i][j], (iteration_matrix[k-1][i][k-1] + iteration_matrix[k-1][k-1][j]));
                 if(iteration_matrix[k-1][i][j] <= (iteration_matrix[k-1][i][k-1] + iteration_matrix[k-1][k-1][j])){
-                    prevursor_matrix[k][i][j] = prevursor_matrix[k-1][i][j];
+                    precursor_matrix[k][i][j] = precursor_matrix[k-1][i][j];
                 } else {
-                    prevursor_matrix[k][i][j] = prevursor_matrix[k-1][k-1][j];
+                    precursor_matrix[k][i][j] = precursor_matrix[k-1][k-1][j];
                 }
             }   
         }   
@@ -166,14 +172,14 @@ int ** get_prevursor_matrix_floyd(int **weight_matrix, int cross_num){
 
     for(k = 0; k < cross_num; k++){
         free_a_matrix(iteration_matrix[k], cross_num);
-        free_a_matrix(prevursor_matrix[k], cross_num);
+        free_a_matrix(precursor_matrix[k], cross_num);
     }
 
     free_a_matrix(iteration_matrix[cross_num], cross_num);
     free(iteration_matrix);
-    // free(prevursor_matrix);
+    // free(precursor_matrix);
 
-    return prevursor_matrix[cross_num];
+    return precursor_matrix[cross_num];
 }
 
 

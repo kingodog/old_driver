@@ -18,7 +18,7 @@ typedef struct {
     int head[2];
     int tail[2];
     Car ***lanes;
-} Road_que;
+} RoadQue;
 
 typedef struct {
     int id;
@@ -36,20 +36,20 @@ typedef struct {
     int pre_forward_surplus_flow;
     int pre_back_surplus_flow;
 
-    Road_que *forward;
-    Road_que *back;
+    RoadQue *forward;
+    RoadQue *back;
 } Road;
 
 
 
-Road_que *init_road_que(int columns_num, int rows_num);
-void destroy_road_que(Road_que *que);
-bool que_is_empty(Road_que *que);
-bool que_is_full(Road_que *que);
+RoadQue *init_road_que(int columns_num, int rows_num);
+void destroy_road_que(RoadQue *que);
+bool que_is_empty(RoadQue *que);
+bool que_is_full(RoadQue *que);
 bool enqueue(Road *road, Car *car, int real_speed, int dir);
 bool get_waiting_head(Road *road, int dir, int *pos);
 Car *dequeue(Road *road, int dir);
-void pass_through(Road_que *que, int curr_row, int curr_column, int columns_num, int real_speed);
+void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed);
 inline int get_min(int a, int b);
 void dispatch_cars_on_road(Road *road);
 // int get_real_speed(Road *road, Car *car, int curr_column, int block);

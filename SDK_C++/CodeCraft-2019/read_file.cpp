@@ -318,8 +318,8 @@ void delete_car_from_list(CarList **p){
 void new_a_road_road_que(Road *road){                    //建立道路供车辆行驶
     int i, j;
     if(road->bothway == 1){
-        road->forward = (Road_que *)malloc(sizeof(Road_que)); 
-        road->back = (Road_que *)malloc(sizeof(Road_que)); 
+        road->forward = (RoadQue *)malloc(sizeof(RoadQue)); 
+        road->back = (RoadQue *)malloc(sizeof(RoadQue)); 
         road->forward->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
         road->back->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
         for(i = 0;i < road->lanes_num; i++){
@@ -332,7 +332,7 @@ void new_a_road_road_que(Road *road){                    //建立道路供车辆
             }  
         }
     } else {
-        road->forward = (Road_que *)malloc(sizeof(Road_que)); 
+        road->forward = (RoadQue *)malloc(sizeof(RoadQue)); 
         road->forward->lanes = (Car ***)malloc(sizeof(Car**)*road->lanes_num);  
         for(i = 0;i < road->lanes_num; i++){
             road->forward->lanes[i] = (Car **)malloc(sizeof(Car*)*road->length);

@@ -1,8 +1,8 @@
 #include "run_road.h"
 
-Road_que *init_road_que(int columns_num, int rows_num){
+RoadQue *init_road_que(int columns_num, int rows_num){
     int i, j;
-    Road_que *que = (Road_que *)malloc(sizeof(Road_que));
+    RoadQue *que = (RoadQue *)malloc(sizeof(RoadQue));
     Car ***lanes = (Car ***)malloc(sizeof(Car **) * rows_num);
     assert(que && lanes);
 
@@ -25,18 +25,18 @@ Road_que *init_road_que(int columns_num, int rows_num){
     return que;
 }
 
-void destroy_road_que(Road_que *que){
+void destroy_road_que(RoadQue *que){
     free(que->lanes);
     que->lanes = NULL;
     free(que);
     que = NULL;
 }
 
-bool que_is_empty(Road_que *que){
+bool que_is_empty(RoadQue *que){
     return (que->head[ROW] == -1) || (que->head[CLM] == -1);
 }
 
-bool que_is_full(Road_que *que){
+bool que_is_full(RoadQue *que){
     if((que->head[ROW] == -1) || (que->head[CLM] == -1)){
         return false;
     }else{
@@ -47,7 +47,7 @@ bool que_is_full(Road_que *que){
 
 
 bool enqueue(Road *road, Car *car, int real_speed, int dir){
-    Road_que * que;
+    RoadQue * que;
     if(dir == FORWARD){
         que = road->forward;
     }else{
@@ -75,7 +75,7 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
 }
 
 bool get_waiting_head(Road *road, int dir, int *pos){
-    Road_que * que;
+    RoadQue * que;
     if(dir == FORWARD){
         que = road->forward;
     }else{
@@ -106,7 +106,7 @@ bool get_waiting_head(Road *road, int dir, int *pos){
 }
 
 Car *dequeue(Road *road, int dir){
-    Road_que * que;
+    RoadQue * que;
     if(dir == FORWARD){
         que = road->forward;
     }else{
@@ -146,7 +146,7 @@ Car *dequeue(Road *road, int dir){
     return tmp;
 }
 
-void pass_through(Road_que *que, int curr_row, int curr_column, int columns_num, int real_speed){
+void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed){
     if(curr_row == que->tail[ROW] && curr_column == (columns_num - 1)){
         que->tail[CLM] = curr_column - real_speed + 1;
     }
@@ -172,7 +172,7 @@ void dispatch_cars_on_road(Road *road){
     int block, speed;
     int i, j, k;
     for(k = 0; k <= road->bothway; k++){
-        Road_que * que = (k == 0) ? road->forward : road->back;
+        RoadQue * que = (k == 0) ? road->forward : road->back;
         for(i = 0; i < road->lanes_num; i++){
             block = -1;
             prev = NULL;
@@ -215,7 +215,7 @@ void dispatch_cars_on_road(Road *road){
 //     road->lanes_num = 3;
 //     road->limit = 4;
 //     road->bothway = 0;
-//     Road_que *que = init_road_que(road->length, road->lanes_num);
+//     RoadQue *que = init_road_que(road->length, road->lanes_num);
 //     road->forward = que;
 //     road->back = NULL;
 
@@ -331,7 +331,7 @@ void dispatch_cars_on_road(Road *road){
 // void set_head(Road *road){
 //     int i, j, k;
 //     for(k = 0; k <= road->bothway; k++){
-//         Road_que * que = (k == 0) ? road->forward : road->back;
+//         RoadQue * que = (k == 0) ? road->forward : road->back;
 //         for(j = 0; j < road->length; j++){
 //             for(i = 0; i < road->lanes_num; i++){
 //                 if(que->lanes[i][j]){
@@ -352,7 +352,7 @@ void dispatch_cars_on_road(Road *road){
 // void set_tail(Road *road){
 //     int i, j, k;
 //     for(k = 0; k <= road->bothway; k++){
-//         Road_que * que = (k == 0) ? road->forward : road->back;
+//         RoadQue * que = (k == 0) ? road->forward : road->back;
 //         for(i = 0; i < road->lanes_num; i++){
 //             for(j = road->length - 1; j >= 0 ; j--){
 //                 if(j == road->length - 1){

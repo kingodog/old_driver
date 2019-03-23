@@ -233,11 +233,11 @@ void get_road_imformation(char *path,int *road_num, Road **road){
         (*road)[i].forward_surplus_flow = (*road)[i].capacity;
         (*road)[i].pre_forward_surplus_flow = (*road)[i].capacity;
         if((*road)[i].bothway == 1){
-            map_capacity + = (*road)[i].capacity*2;         //调整全体地图的全体容量
+            map_capacity += (*road)[i].capacity*2;         //调整全体地图的全体容量
             (*road)[i].back_surplus_flow = (*road)[i].capacity;
             (*road)[i].pre_back_surplus_flow = (*road)[i].capacity;
         } else {
-            map_capacity + = (*road)[i].capacity;
+            map_capacity += (*road)[i].capacity;
             (*road)[i].back_surplus_flow = 0;
             (*road)[i].pre_back_surplus_flow = 0;
         }
@@ -341,5 +341,112 @@ void new_a_road_road_que(Road *road){                    //建立道路供车辆
         road->back = init_road_que(road->length, road->lanes_num);
     } else {
         road->forward = init_road_que(road->length, road->lanes_num);
+    }
+}
+
+void merge_roads(Road *array, int left, int mid, int right){
+    int i = 0, j = 0, k = 0;
+    int temp_l[mid - left + 1], temp_r[right - mid];
+    for(i = 0; i < mid - left + 1; i++){
+        temp_l[i] = array[left + i].id;
+    }
+    for(j = 0; j < right - mid; j++){
+        temp_r[j] = array[mid + j + 1].id;
+    }
+    i = j = 0;
+    for(k = left; i < mid - left + 1 && j < right - mid; k++){
+        if(temp_l[i] > temp_r[j]){
+            array[k] = array[j++];
+        }else{
+            array[k] = array[i++];
+        }
+    }
+    while(i < mid - left + 1){
+        array[k++] = array[i++];
+    }
+    while(j < right - mid){
+        array[k++] = array[j++];
+    }
+}
+
+void merge_sort_roads(Road *array, int left, int right){
+    int mid = 0;
+    if(left < right){
+        mid = (left + right) / 2;
+        merge_sort_roads(array, left, mid);
+        merge_sort_roads(array, mid + 1, right);
+        merge_roads(array, left, mid, right);
+    }
+}
+
+
+void merge_crosses(Cross *array, int left, int mid, int right){
+    int i = 0, j = 0, k = 0;
+    int temp_l[mid - left + 1], temp_r[right - mid];
+    for(i = 0; i < mid - left + 1; i++){
+        temp_l[i] = array[left + i].id;
+    }
+    for(j = 0; j < right - mid; j++){
+        temp_r[j] = array[mid + j + 1].id;
+    }
+    i = j = 0;
+    for(k = left; i < mid - left + 1 && j < right - mid; k++){
+        if(temp_l[i] > temp_r[j]){
+            array[k] = array[j++];
+        }else{
+            array[k] = array[i++];
+        }
+    }
+    while(i < mid - left + 1){
+        array[k++] = array[i++];
+    }
+    while(j < right - mid){
+        array[k++] = array[j++];
+    }
+}
+
+void merge_sort_crosses(Cross *array, int left, int right){
+    int mid = 0;
+    if(left < right){
+        mid = (left + right) / 2;
+        merge_sort_crosses(array, left, mid);
+        merge_sort_crosses(array, mid + 1, right);
+        merge_crosses(array, left, mid, right);
+    }
+}
+
+
+void merge_cars(Car *array, int left, int mid, int right){
+    int i = 0, j = 0, k = 0;
+    int temp_l[mid - left + 1], temp_r[right - mid];
+    for(i = 0; i < mid - left + 1; i++){
+        temp_l[i] = array[left + i].id;
+    }
+    for(j = 0; j < right - mid; j++){
+        temp_r[j] = array[mid + j + 1].id;
+    }
+    i = j = 0;
+    for(k = left; i < mid - left + 1 && j < right - mid; k++){
+        if(temp_l[i] > temp_r[j]){
+            array[k] = array[j++];
+        }else{
+            array[k] = array[i++];
+        }
+    }
+    while(i < mid - left + 1){
+        array[k++] = array[i++];
+    }
+    while(j < right - mid){
+        array[k++] = array[j++];
+    }
+}
+
+void merge_sort_cars(Car *array, int left, int right){
+    int mid = 0;
+    if(left < right){
+        mid = (left + right) / 2;
+        merge_sort_cars(array, left, mid);
+        merge_sort_cars(array, mid + 1, right);
+        merge_cars(array, left, mid, right);
     }
 }

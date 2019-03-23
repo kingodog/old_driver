@@ -1,32 +1,46 @@
 #include "project.h"
-
+#include "read_file.h"
 extern unsigned int time;
 
 extern hash_map<int, Road> road_map;
 extern hash_map<int, Cross> cross_map;
 
+extern CarList *carlist;
+extern CarList *carlist_sroted;
+extern int running_car_num;
+
+extern unsigned int time;
+
+extern int all_car_end ;
+extern int end_put_car ;
+
+extern int lock ;
+
+extern int map_capacity;
+extern int surplus_map_capacity;
+
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
     int no_car = 0;
     time =10;
-    reset_all_pre_flow(road_num, road_num);
-    put_car(car, road, cross, ture, true);//第一次特殊，先加车
+    reset_all_pre_flow(road, road_num);
+    put_car(car, road, cross);//第一次特殊，先加车
 
     while(carlist != NULL){
         run_all_road(road, road_num);
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
-        reset_all_pre_flow(road_num, road_num);
-        put_car(car, road, cross, ture, true);
+        reset_all_pre_flow(road, road_num);
+        put_car(car, road, cross);
         time ++;
     }
 
-    reset_all_pre_flow(road_num, road_num);
+    reset_all_pre_flow(road, road_num);
 
     while(running_car_num != 0){
         run_all_road(road, road_num);
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
-        reset_all_pre_flow(road_num, road_num);
+        reset_all_pre_flow(road, road_num);
         time ++;
     }
 
@@ -53,10 +67,10 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
         for( j = 0; j < this_road->length; j++)
         {
             if(que[i][j] !=NULL){
-                if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit){
+                if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
                     if(que[i][j]->next_step == -1){             //到达目的地
-                        que[i][j]->next_dir = -1;
+                        que[i][j]->next_dir = STRAIGHT;  //到达的   与  直行同优先级
                         this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                         continue;
                     } else {
@@ -86,8 +100,8 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                     if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
                         if(que[i][j]->next_step == -1){             //到达目的地
-                            que[i][j]->next_dir = -1;
-                            this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit)
+                            que[i][j]->next_dir = STRAIGHT;
+                            this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                             continue;
                         } else {
                             que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
@@ -151,7 +165,7 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
             }
         }
     }
-    free_a_matrix(weight_matrix);
+    free_a_matrix(weight_matrix, cross_num);
 
     //找到end在cross数组中id
     int end_id = ((int)(&cross_map[end]) - (int)(cross))/sizeof(Cross);

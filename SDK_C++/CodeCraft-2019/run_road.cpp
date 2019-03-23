@@ -4,7 +4,7 @@ void run_all_road(Road *road, int road_num){
     int i;
     for(i = 0; i < road_num; i++)
     {
-        dispatch_cars_on_road(&(road[i]))
+        dispatch_cars_on_road(&(road[i]));
     }
 }
 
@@ -80,6 +80,33 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
     que->tail[CLM] = (que->tail[CLM] + 1) % road->length;
 
     return true;
+}
+
+int cross_through(Road *road, Car *car, int distance, RoadQue * que){
+    int i, j;
+    for( i = 0; i < road->lanes_num; i++)
+    {
+        for( j = road->length-1; j > road->length - 1 - distance; j--)
+        {
+            if(que->lanes[i][j] != NULL){
+                if(que->lanes[i][j]->status == WAIT){
+                    return PLEASE_WAIT;
+                } else if (que->lanes[i][j]->status == END) {
+                    if(j == 0){                 //整下一行
+                        break;
+                    } else {            //可以放车
+                        que->lanes[i][j+1] = car;
+                        car->status =END;
+                        return COME_ON;         
+                    }
+                }
+            }
+        }
+        que->lanes[i][road->length - distance] = car;           //改行有足够距离停放
+        car->status =END;
+        return COME_ON; 
+    }
+    return GET_OUT;             //每行都是  END 在结尾
 }
 
 bool get_waiting_head(Road *road, int dir, int *pos){

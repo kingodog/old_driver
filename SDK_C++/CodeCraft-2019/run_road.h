@@ -14,6 +14,10 @@
 #define ROW             ((int)0)
 #define CLM             ((int)1)
 
+#define COME_ON             ((int)1)
+#define GET_OUT             ((int)2)
+#define PLEASE_WAIT         ((int)3)
+
 typedef struct {
     int head[2];
     int tail[2];
@@ -52,6 +56,8 @@ Car *dequeue(Road *road, int dir);
 void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed);
 inline int get_min(int a, int b);
 void dispatch_cars_on_road(Road *road);
+
+int cross_through(Road *road, Car *car, int distance, RoadQue * que);
 // int get_real_speed(Road *road, Car *car, int curr_column, int block);
 // void set_head(Road *road);
 // void set_tail(Road *road);

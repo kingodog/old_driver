@@ -37,7 +37,7 @@ using namespace std;
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
         Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);
-void get_cross_imformation(char *path,int *cross_num, Cross **cross, Road **road);
+void get_cross_imformation(char *path, int *cross_num, Cross **cross);
 void get_car_imformation(char *path,int *car_num, Car **car,int *road_num);
 void get_road_imformation(char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);

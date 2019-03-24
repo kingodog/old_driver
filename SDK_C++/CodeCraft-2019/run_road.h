@@ -54,7 +54,9 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir);
 bool get_waiting_head(Road *road, int dir, int *pos);
 Car *dequeue(Road *road, int dir);
 void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed);
-inline int get_min(int a, int b);
+inline int get_min(int a, int b){
+    return ((a < b) ? a : b);
+}
 void dispatch_cars_on_road(Road *road);
 
 int cross_through(Road *road, Car *car, int distance, RoadQue * que);

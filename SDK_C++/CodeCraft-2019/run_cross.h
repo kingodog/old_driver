@@ -34,5 +34,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag);
 void adjust_a_lane(int start, int end, Car **lane, int limit_speed);
 Car *get_left_road_first_car(Cross * corss, int self_road_id);
 Car *get_right_road_first_car(Cross * corss, int self_road_id);
-Car *get_across_road_first_car(Cross * corss, int self_road_id)
+Car *get_across_road_first_car(Cross * corss, int self_road_id);
+
+
 #endif

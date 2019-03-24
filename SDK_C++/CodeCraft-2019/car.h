@@ -33,11 +33,10 @@ typedef struct
     CarProject *project;
 }Car;
 
-typedef struct 
-{
+typedef struct  car_list{
     Car *car;
-    CarList *next;
-    CarList *last;
+    car_list *next;
+    car_list *last;
 }CarList;
 
 #endif

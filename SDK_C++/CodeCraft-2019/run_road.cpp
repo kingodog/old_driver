@@ -238,9 +238,33 @@ void dispatch_cars_on_road(Road *road){
                 prev = curr;
             }
         }
+
     }
 }
 
+void reset_all_car_to_ready(Road *road, int road_num){
+    int i, j, k;
+    Car *a;
+    for( i = 0; i < road_num; i++){
+        for(j = 0; j < road[i].lanes_num; j++){
+            for(k = 0; k < road[i].length; k++){
+                a=road[i].forward->lanes[j][k];
+                if(road[i].forward->lanes[j][k] !=NULL){
+                    road[i].forward->lanes[j][k]->status = READY;
+                } 
+            }
+        }
+        if (road[i].bothway == 1) {
+            for(j = 0; j < road[i].lanes_num; j++){
+                for(k = 0; k < road[i].length; k++){
+                    if(road[i].back->lanes[j][k] !=NULL){
+                        road[i].back->lanes[j][k]->status = READY;
+                    } 
+                }
+            }
+        }
+    }
+}
 //测试
 // int main(){
 //     Road *road = (Road *)malloc(sizeof(Road));

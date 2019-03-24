@@ -2,8 +2,8 @@
 #include "read_file.h"
 extern unsigned int time;
 
-extern hash_map<int, Road> road_map;
-extern hash_map<int, Cross> cross_map;
+extern hash_map<int, Road *> road_map;
+extern hash_map<int, Cross *> cross_map;
 
 extern CarList *carlist;
 extern CarList *carlist_sroted;
@@ -24,14 +24,15 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     int no_car = 0;
     time =10;
     reset_all_pre_flow(road, road_num);
-    put_car(car, road, cross);//第一次特殊，先加车
-
+    put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车
+    reset_all_car_to_ready(road, road_num);
     while(carlist != NULL){
         run_all_road(road, road_num);
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
-        put_car(car, road, cross);
+        put_car(car, road, cross, cross_num, road_num);
+        reset_all_car_to_ready(road, road_num);
         time ++;
     }
 
@@ -42,6 +43,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
+        reset_all_car_to_ready(road, road_num);
         time ++;
     }
 
@@ -75,12 +77,12 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                         this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                         continue;
                     } else {
-                        que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                        que[i][j]->next_dir = get_direction_by_road_id(*(cross_map[this_road->cross_id_end]), this_road->id, que[i][j]->next_step);
                         this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
-                        if(road_map[que[i][j]->next_step].cross_id_start == this_road->cross_id_end){
-                            road_map[que[i][j]->next_step].pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                        if(road_map[que[i][j]->next_step]->cross_id_start == this_road->cross_id_end){
+                            road_map[que[i][j]->next_step]->pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step]->limit);
                         } else {
-                            road_map[que[i][j]->next_step].pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                            road_map[que[i][j]->next_step]->pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step]->limit);
                         }
                     }
                     
@@ -105,12 +107,12 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                             continue;
                         } else {
-                            que[i][j]->next_dir = get_direction_by_road_id(cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                            que[i][j]->next_dir = get_direction_by_road_id(*cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
-                            if(road_map[que[i][j]->next_step].cross_id_start == this_road->cross_id_start){
-                                road_map[que[i][j]->next_step].pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                            if(road_map[que[i][j]->next_step]->cross_id_start == this_road->cross_id_start){
+                                road_map[que[i][j]->next_step]->pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step]->limit);
                             } else {
-                                road_map[que[i][j]->next_step].pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step].limit);
+                                road_map[que[i][j]->next_step]->pre_forward_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step]->limit);
                             }
                         }
                         
@@ -131,22 +133,25 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed){
     int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
     //todo
-    int dist[cross_num], prev[cross_num], flag[cross_num];
-    int i, j, k;
+
+    int *dist = (int *)malloc(sizeof(int)*cross_num);
+    int *prev = (int *)malloc(sizeof(int)*cross_num);
+    int *flag = (int *)malloc(sizeof(int)*cross_num);
+
+    int i, j, k = 0;
+    int src_id = ((int)(cross_map[start]) - (int)(cross))/sizeof(Cross);
 
     if(start == end){
         return -1;
     }
     //初始化
     for(i = 0; i < cross_num; i++){
-        dist[i] = INFINITY_INT;
+        dist[i] = weight_matrix[src_id][i];
         prev[i] = NIL;
-        flag[i] = SIGNED;
-    }
-    //找到start在cross数组中id，并初始化它的顶点属性
-    int src_id = ((int)(&cross_map[start]) - (int)(cross))/sizeof(Cross);
+        flag[i] = UNSIGN;
+    }  
     dist[src_id] = 0;
-    flag[src_id] = UNSIGN;
+    flag[src_id] = SIGNED;
     //遍历除了start顶点的其他顶点
     for(i = 0; i < cross_num - 1; i++){
         //找到未标记的顶点的最短估计中最小者
@@ -173,12 +178,16 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     free_a_matrix(weight_matrix, cross_num);
 
     //找到end在cross数组中id
-    int end_id = ((int)(&cross_map[end]) - (int)(cross))/sizeof(Cross);
-    while(!prev[end_id]){
+    int end_id = ((int)(cross_map[end]) - (int)(cross))/sizeof(Cross);
+    while(prev[end_id] != NIL){
         end_id = prev[end_id];
     }
 
-    return cross_to_road[end_id][start];
+    free(dist);
+    free(prev);
+    free(flag);
+
+    return cross_to_road[end_id][src_id];
     // Cross next_cross = cross[end_id];
 
     

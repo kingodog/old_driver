@@ -6,8 +6,8 @@ int car_classified[11];
 
 extern int ** cross_to_road;
 
-extern hash_map<int, Road> road_map;
-extern hash_map<int, Cross> cross_map;
+extern hash_map<int, Road *> road_map;
+extern hash_map<int, Cross *> cross_map;
 extern int map_capacity;
 extern int surplus_map_capacity;
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
@@ -107,33 +107,34 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
         sort_cross_road_id(&((*cross)[i]));
         for(k = 0;k < 4;k++){
             if((*cross)[i].road_id[k] == -1){
-                (*cross)[i].road_dir[k] == NULL;
-                (*cross)[i].road_dir_out[k] == NULL;
+                (*cross)[i].road_dir[k] = NULL;
+                (*cross)[i].road_dir_out[k] = NULL;
                 (*cross)[i].road[k] = NULL;
             } else {
-                (*cross)[i].road[k] = &(road_map[(*cross)[i].road_id[k]]);
-                if(road_map[(*cross)[i].road_id[k]].cross_id_start == (*cross)[i].id){   //特别注意，
-                    if(road_map[(*cross)[i].road_id[k]].bothway == 1){
-                        (*cross)[i].road_dir[k] == road_map[(*cross)[i].road_id[k]].back;
-                        (*cross)[i].road_dir_out[k] == road_map[(*cross)[i].road_id[k]].forward;
+                (*cross)[i].road[k] = road_map[(*cross)[i].road_id[k]];
+                if(road_map[(*cross)[i].road_id[k]]->cross_id_start == (*cross)[i].id){   //特别注意，
+                    if(road_map[(*cross)[i].road_id[k]]->bothway == 1){
+                        (*cross)[i].road_dir[k] = road_map[(*cross)[i].road_id[k]]->back;
+                        (*cross)[i].road_dir_out[k] = road_map[(*cross)[i].road_id[k]]->forward;
                     } else {
-                        (*cross)[i].road_dir[k] == NULL;
-                        (*cross)[i].road_dir_out[k] == road_map[(*cross)[i].road_id[k]].forward;
+                        (*cross)[i].road_dir[k] = NULL;
+                        (*cross)[i].road_dir_out[k] = road_map[(*cross)[i].road_id[k]]->forward;
                     }
                 } else {
-                    if(road_map[(*cross)[i].road_id[k]].bothway == 1){
-                        (*cross)[i].road_dir[k] == road_map[(*cross)[i].road_id[k]].forward;
-                        (*cross)[i].road_dir_out[k] == road_map[(*cross)[i].road_id[k]].back;
+                    if(road_map[(*cross)[i].road_id[k]]->bothway == 1){
+                        (*cross)[i].road_dir[k] = road_map[(*cross)[i].road_id[k]]->forward;
+                        (*cross)[i].road_dir_out[k] = road_map[(*cross)[i].road_id[k]]->back;
                     } else {
-                        (*cross)[i].road_dir[k] == road_map[(*cross)[i].road_id[k]].forward;
-                        (*cross)[i].road_dir_out[k] == NULL;
+                        (*cross)[i].road_dir[k] = road_map[(*cross)[i].road_id[k]]->forward;
+                        (*cross)[i].road_dir_out[k] = NULL;
 
                     }
                 }
             }
         }
         
-        cross_map[(*cross)[i].id] = (*cross)[i];
+        cross_map[(*cross)[i].id] = &(*cross)[i];
+
 
         i++;
     }
@@ -245,7 +246,7 @@ void get_road_imformation(char *path,int *road_num, Road **road){
             (*road)[i].pre_back_surplus_flow = 0;
         }
         new_a_road_road_que(&((*road)[i]));
-        road_map[(*road)[i].id] = (*road)[i];
+        road_map[(*road)[i].id] = &(*road)[i];
         i++;
     }
 
@@ -311,7 +312,6 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
 		p_sorted->next = (CarList *)malloc(sizeof(CarList));
         p_sorted->next->last = p_sorted;
         p_sorted = p_sorted->next;
-        p_sorted->last;
         p_sorted->car =  car_sort_by_speed[i];
         p_sorted->next=NULL;
 
@@ -319,7 +319,6 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
         p->next = (CarList *)malloc(sizeof(CarList));
         p->next->last = p;
         p = p->next;
-        p->last;
         p->car =  &(car[i]);
         p->next=NULL;
 	}
@@ -328,10 +327,17 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
 void delete_car_from_list(CarList **p){
     CarList *x;
     x = *p;
+    if(*p == NULL){
+        return;
+    }
     if(carlist==(*p)){
         carlist = carlist->next;
+        carlist->last = NULL;
     } else {
-        (*p)->last = (*p)->next;
+        (*p)->last->next = (*p)->next;
+        if((*p)->next != NULL){
+            (*p)->next->last = (*p)->last;
+        }
     }
     (*p) = (*p)->next;
     free(x);
@@ -344,6 +350,7 @@ void new_a_road_road_que(Road *road){                    //建立道路供车辆
         road->back = init_road_que(road->length, road->lanes_num);
     } else {
         road->forward = init_road_que(road->length, road->lanes_num);
+        road->back = NULL;
     }
 }
 
@@ -455,16 +462,26 @@ void merge_sort_cars(Car *array, int left, int right){
 }
 
 void build_cross_num_to_road_num_matrix(int cross_num, int road_num, Cross *cross, Road *road){
-    int i, j;
+    int i, j, k, l;
     cross_to_road = new_a_int_matrix(cross_num);
     for( i = 0; i < cross_num; i++){
        for( j = 0; j < cross_num; j++){
-           cross_to_road[i][j] = NIL;
+            cross_to_road[i][j] = NIL;
+            cross_to_road[j][i] = NIL;
+            if(i  == j){
+                continue;
+            }  
+            for(k = 1; k < 4; k++){
+                for( l = 0; l < 4; l++)
+                {
+                    if(cross[i].road_id[k] == cross[j].road_id[l]){
+                        cross_to_road[i][j] = cross[i].road_id[k];
+                        cross_to_road[j][i] = cross[i].road_id[k];
+                        break;                   //节约点点时间
+                    }
+                }
+           }
        }
     }
-
-    for(i = 0; i < road_num; i++){
-        cross_to_road[road[i].cross_id_end][road[i].cross_id_start] = road[i].id;
-        cross_to_road[road[i].cross_id_start][road[i].cross_id_end] = road[i].id;
-    }
+    return;
 }

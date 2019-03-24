@@ -1,1 +1,0 @@
-get_cross_imformation

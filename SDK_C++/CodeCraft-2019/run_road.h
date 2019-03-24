@@ -60,6 +60,8 @@ inline int get_min(int a, int b){
 void dispatch_cars_on_road(Road *road);
 
 int cross_through(Road *road, Car *car, int distance, RoadQue * que);
+
+void reset_all_car_to_ready(Road *road, int road_num);
 // int get_real_speed(Road *road, Car *car, int curr_column, int block);
 // void set_head(Road *road);
 // void set_tail(Road *road);

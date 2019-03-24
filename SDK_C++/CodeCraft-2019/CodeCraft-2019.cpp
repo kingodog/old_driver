@@ -9,8 +9,8 @@
 #include "output_file.h"
 #include "run_road.h"
 
-hash_map<int, Road> road_map;
-hash_map<int, Cross> cross_map;
+hash_map<int, Road *> road_map;
+hash_map<int, Cross *> cross_map;
 unsigned int time = 0;
 CarList *carlist;
 CarList *carlist_sroted;

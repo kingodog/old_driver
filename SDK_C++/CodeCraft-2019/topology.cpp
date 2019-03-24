@@ -40,12 +40,6 @@ int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_n
     return NO_CONNECT;
 }
 
-
-
-
-
-
-
 int ** build_weight_matrix_by_time(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
     int **weight_matrix;
     int i, j;

@@ -22,6 +22,8 @@ int surplus_map_capacity = 0;
 int all_car_end = 0;
 int end_put_car = 0;
 
+int ** cross_to_road;
+
 int main(int argc, char *argv[])
 {
     std::cout << "Begin" << std::endl;

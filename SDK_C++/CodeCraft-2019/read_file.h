@@ -9,6 +9,7 @@
 #include "car.h"
 #include "run_cross.h"
 #include "run_road.h"
+#include "topology.h"
 #include <hash_map>
 
 
@@ -45,10 +46,14 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num);
 void delete_car_from_list(CarList **p);
 void sort_cross_road_id(Cross *cross);
 void exchange_int_num(int *a, int *b);
+
+
 void merge_roads(Road *array, int left, int mid, int right);
 void merge_sort_roads(Road *array, int left, int right);
 void merge_crosses(Cross *array, int left, int mid, int right);
 void merge_sort_crosses(Cross *array, int left, int right);
 void merge_cars(Car *array, int left, int mid, int right);
 void merge_sort_cars(Car *array, int left, int right);
+
+void build_cross_num_to_road_num_matrix(int cross_num, int road_num, Cross *cross, Road *road);
 #endif

@@ -18,6 +18,7 @@ extern int lock ;
 
 extern int map_capacity;
 extern int surplus_map_capacity;
+extern int ** cross_to_road;
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
     int no_car = 0;
@@ -132,6 +133,10 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     //todo
     int dist[cross_num], prev[cross_num], flag[cross_num];
     int i, j, k;
+
+    if(start == end){
+        return -1;
+    }
     //初始化
     for(i = 0; i < cross_num; i++){
         dist[i] = INFINITY_INT;
@@ -172,7 +177,11 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     while(!prev[end_id]){
         end_id = prev[end_id];
     }
-    Cross next_cross = cross[end_id];
+
+    return cross_to_road[end_id][start];
+    // Cross next_cross = cross[end_id];
+
+    
     //TODO:通过下一个路口得到下一条路
 }
 

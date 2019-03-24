@@ -4,6 +4,8 @@ extern CarList *carlist;
 extern CarList *carlist_sroted;
 int car_classified[11];
 
+extern int ** cross_to_road;
+
 extern hash_map<int, Road> road_map;
 extern hash_map<int, Cross> cross_map;
 extern int map_capacity;
@@ -16,6 +18,7 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
     get_cross_imformation(cross_path,cross_num, cross);
     get_car_imformation(car_path,car_num, car, road_num);
     sort_car_by_speed_and_creat_list(*car, *car_num);
+    build_cross_num_to_road_num_matrix(*cross_num, *road_num, cross, road);
 }
 
 void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
@@ -448,5 +451,20 @@ void merge_sort_cars(Car *array, int left, int right){
         merge_sort_cars(array, left, mid);
         merge_sort_cars(array, mid + 1, right);
         merge_cars(array, left, mid, right);
+    }
+}
+
+void build_cross_num_to_road_num_matrix(int cross_num, int road_num, Cross *cross, Road *road){
+    int i, j;
+    cross_to_road = new_a_int_matrix(cross_num);
+    for( i = 0; i < cross_num; i++){
+       for( j = 0; j < cross_num; j++){
+           cross_to_road[i][j] = NIL;
+       }
+    }
+
+    for(i = 0; i < road_num; i++){
+        cross_to_road[road[i].cross_id_end][road[i].cross_id_start] = road[i].id;
+        cross_to_road[road[i].cross_id_start][road[i].cross_id_end] = road[i].id;
     }
 }

@@ -11,7 +11,6 @@
 #define  LEFT       (1)
 #define  RIGHT      (2)
 
-#define  RUNNING_MAX_NUM      (500)
 
 typedef struct 
 {

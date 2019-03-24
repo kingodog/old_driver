@@ -63,6 +63,7 @@ void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_n
 
 void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num){
     int i, j;
+    int k;
 
     Car ***que = this_road->forward->lanes;
     for( i = 0; i < this_road->lanes_num; i++)              //正向
@@ -70,6 +71,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
         for( j = 0; j < this_road->length; j++)
         {
             if(que[i][j] !=NULL){
+                if(que[i][j]->id==10018){            //test
+                    k = que[i][j]->id;
+                }
                 if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
                     if(que[i][j]->next_step == -1){             //到达目的地
@@ -100,6 +104,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
             for( j = 0; j < this_road->length; j++)
             {
                 if(que[i][j] !=NULL){
+                    if(que[i][j]->id==10018){            //test
+                    k = que[i][j]->id;
+                    }
                     if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
                         if(que[i][j]->next_step == -1){             //到达目的地
@@ -107,7 +114,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                             continue;
                         } else {
-                            que[i][j]->next_dir = get_direction_by_road_id(*cross_map[this_road->cross_id_end], this_road->id, que[i][j]->next_step);
+                            que[i][j]->next_dir = get_direction_by_road_id(*cross_map[this_road->cross_id_start], this_road->id, que[i][j]->next_step);
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                             if(road_map[que[i][j]->next_step]->cross_id_start == this_road->cross_id_start){
                                 road_map[que[i][j]->next_step]->pre_back_surplus_flow -= get_min(que[i][j]->speed, road_map[que[i][j]->next_step]->limit);
@@ -130,10 +137,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 
 
 //可以按照书上进行优化
-int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed){
-    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
+int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_id){
+    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed , this_road_id);
     //todo
-
     int *dist = (int *)malloc(sizeof(int)*cross_num);
     int *prev = (int *)malloc(sizeof(int)*cross_num);
     int *flag = (int *)malloc(sizeof(int)*cross_num);

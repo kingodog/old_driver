@@ -241,7 +241,6 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             
                             if((next_real_speed - j) <= 0 ){        //走到头终止
                                 way->lanes[i][0] = way->lanes[i][j];
-                                
                                 way->lanes[i][0]->status = END;
                                 way->lanes[i][0]->next_dir = -1;
                                 way->lanes[i][0]->next_step = -1;
@@ -251,21 +250,22 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                 adjust_a_lane(j, road->length, way->lanes[i], road->limit);
                                 break; 
                             } else {
+                                printf("%d\n",cross->road[m]->lanes_num);
                                 switch(cross_through(cross->road[m], way->lanes[i][j], next_real_speed, cross->road_dir_out[m])){
                                     case COME_ON:
                                         way->lanes[i][j]->status = END;
-                                        car_new_a_project_road(way->lanes[i][j], way->lanes[i][0]->next_step);
-                                        way->lanes[i][j]->next_dir = -1;
-                                        way->lanes[i][j]->next_step = -1;
-                                        *end_flag = 0;
-                                        lock = 0;
+                                        car_new_a_project_road(way->lanes[i][j], way->lanes[i][j]->next_step);
                                         if(road_map[way->lanes[i][j]->next_step]->cross_id_start == cross->id){
                                             road_map[way->lanes[i][j]->next_step]->forward_surplus_flow -= next_real_speed;
                                         } else {
                                             road_map[way->lanes[i][j]->next_step]->back_surplus_flow -= next_real_speed;
                                         }
+                                        way->lanes[i][j]->next_dir = -1;
+                                        way->lanes[i][j]->next_step = -1;
                                         *curr_flow = *curr_flow + speed;
                                         way->lanes[i][j] = NULL;
+                                        *end_flag = 0;
+                                        lock = 0;
                                         adjust_a_lane(j, road->length, way->lanes[i], road->limit);
                                     break;
                                     case PLEASE_WAIT:               //本条路结束 遍历

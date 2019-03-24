@@ -1,6 +1,6 @@
 #include "topology.h"
 
-int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
+int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed, int this_road_id){
     int **weight_matrix;
     int i, j;
     weight_matrix = (int**)malloc(sizeof(int*)*cross_num);  

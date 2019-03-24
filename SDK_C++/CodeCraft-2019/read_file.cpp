@@ -1,5 +1,5 @@
 #include "read_file.h"
-
+#include "project.h"
 extern CarList *carlist;
 extern CarList *carlist_sroted;
 int car_classified[11];
@@ -18,7 +18,7 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
     get_cross_imformation(cross_path,cross_num, cross);
     get_car_imformation(car_path,car_num, car, road_num);
     sort_car_by_speed_and_creat_list(*car, *car_num);
-    build_cross_num_to_road_num_matrix(*cross_num, *road_num, cross, road);
+    build_cross_num_to_road_num_matrix(*cross_num, *road_num, *cross, *road);
 }
 
 void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){

@@ -9,6 +9,6 @@
 
 
 
-void output_file(char *path, CarProject *carproject, int car_num);
+void output_file(char *path, Car *car, int car_num);
 
 #endif

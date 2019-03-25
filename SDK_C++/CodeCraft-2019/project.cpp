@@ -75,7 +75,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                     k = que[i][j]->id;
                 }
                 if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
-                    que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
+                    que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_start,this_road->cross_id_end);
                     if(que[i][j]->next_step == -1){             //到达目的地
                         que[i][j]->next_dir = STRAIGHT;  //到达的   与  直行同优先级
                         this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
@@ -108,7 +108,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                     k = que[i][j]->id;
                     }
                     if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
-                        que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed);
+                        que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_end, this_road->cross_id_start);
                         if(que[i][j]->next_step == -1){             //到达目的地
                             que[i][j]->next_dir = STRAIGHT;
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
@@ -136,16 +136,26 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 }
 
 
-//可以按照书上进行优化
-int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_id){
-    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed , this_road_id);
-    //todo
+//可以按照书上进行优化   //最后的参数不是道路的起始和终止路口，而是需要看车子，车子开来的方向为起始~~~~
+int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_start_id, int this_road_end_id){  
+    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
     int *dist = (int *)malloc(sizeof(int)*cross_num);
     int *prev = (int *)malloc(sizeof(int)*cross_num);
     int *flag = (int *)malloc(sizeof(int)*cross_num);
 
     int i, j, k = 0;
     int src_id = ((int)(cross_map[start]) - (int)(cross))/sizeof(Cross);
+
+    int shiedl_start = NIL; 
+    int shiedl_end = NIL;
+    if(this_road_start_id != NIL){
+        shiedl_start = ((int)(cross_map[this_road_start_id]) - (int)(cross))/sizeof(Cross);
+        shiedl_end = ((int)(cross_map[this_road_end_id]) - (int)(cross))/sizeof(Cross);
+
+        weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前的 反向到
+    }
+
+    
 
     if(start == end){
         return -1;

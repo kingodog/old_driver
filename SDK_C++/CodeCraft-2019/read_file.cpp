@@ -27,7 +27,7 @@ void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
     char StrLine[1024];
     char *str;
     int i=0;
-    for(i = 0; i < 10; i++){     //初始化数组;
+    for(i = 0; i < 11; i++){     //初始化数组;
         car_classified[i] = 0;
     }
     

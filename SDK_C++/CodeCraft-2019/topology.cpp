@@ -1,6 +1,6 @@
 #include "topology.h"
 
-int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed, int this_road_id){
+int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
     int **weight_matrix;
     int i, j;
     weight_matrix = (int**)malloc(sizeof(int*)*cross_num);  
@@ -26,13 +26,13 @@ int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_n
     for(i = 0; i < road_num; i++){
         if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
             if( road[i].pre_back_surplus_flow <= 0 ){
-                return NO_CONNECT;
+                return INFINITY_INT;
             }
             x = (float)road[i].capacity/road[i].pre_back_surplus_flow;
             return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);                                    
         } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
             if( road[i].pre_back_surplus_flow <= 0 ){
-                return NO_CONNECT;
+                return INFINITY_INT;
             }
             return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);    
         }

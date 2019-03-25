@@ -7,12 +7,12 @@
 #include "car.h"
 #include "run_cross.h"
 
-#define NO_CONNECT              INFINITY_INT
+#define NO_CONNECT              (0x1<<23)
 #define INFINITY_INT            (0x1<<20)
 #define NIL                     (-1)
 // #define NO_CONNECT              (-1)
 
-int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed, int this_road_id);
+int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed);
 int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_num, int speed);
 
 int ** build_weight_matrix_by_time(Cross *cross, Road *road, int cross_num, int  road_num, int speed);

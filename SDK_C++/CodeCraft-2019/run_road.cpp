@@ -92,7 +92,7 @@ int cross_through(Road *road, Car *car, int distance, RoadQue * que){
                 if(que->lanes[i][j]->status == WAIT){
                     return PLEASE_WAIT;
                 } else if (que->lanes[i][j]->status == END) {
-                    if(j == 0){                 //整下一行
+                    if(j == road->length-1){                 //整下一行
                         break;
                     } else {            //可以放车
                         que->lanes[i][j+1] = car;
@@ -101,6 +101,9 @@ int cross_through(Road *road, Car *car, int distance, RoadQue * que){
                     }
                 }
             }
+        }
+        if(j == road->length-1){
+            continue;
         }
         que->lanes[i][road->length - distance] = car;           //改行有足够距离停放
         car->status =END;

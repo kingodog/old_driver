@@ -25,6 +25,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     time =10;
     reset_all_pre_flow(road, road_num);
     put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车
+    time ++;
     reset_all_car_to_ready(road, road_num);
     while(carlist != NULL){
         run_all_road(road, road_num);
@@ -33,6 +34,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         reset_all_pre_flow(road, road_num);
         put_car(car, road, cross, cross_num, road_num);
         reset_all_car_to_ready(road, road_num);
+        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         time ++;
     }
 
@@ -44,6 +46,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
         reset_all_car_to_ready(road, road_num);
+        printf("ture_all_car : %d\n",all_car_running(road, road_num));
         time ++;
     }
 

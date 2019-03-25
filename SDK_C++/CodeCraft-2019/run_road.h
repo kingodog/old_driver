@@ -53,17 +53,20 @@ bool que_is_full(RoadQue *que);
 bool enqueue(Road *road, Car *car, int real_speed, int dir);
 bool get_waiting_head(Road *road, int dir, int *pos);
 Car *dequeue(Road *road, int dir);
-void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed);
+void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed, Road *road);
 inline int get_min(int a, int b){
     return ((a < b) ? a : b);
+}
+inline int get_max(int a, int b){
+    return ((a > b) ? a : b);
 }
 void dispatch_cars_on_road(Road *road);
 
 int cross_through(Road *road, Car *car, int distance, RoadQue * que);
 
 void reset_all_car_to_ready(Road *road, int road_num);
-void set_head(Road *road);
-void set_tail(Road *road);
+void set_head(Road *road, RoadQue *que);
+void set_tail(Road *road, RoadQue *que);
 // int get_real_speed(Road *road, Car *car, int curr_column, int block);
 // void set_head(Road *road);
 // void set_tail(Road *road);

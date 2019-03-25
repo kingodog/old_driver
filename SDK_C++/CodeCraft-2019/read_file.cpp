@@ -332,7 +332,9 @@ void delete_car_from_list(CarList **p){
     }
     if(carlist==(*p)){
         carlist = carlist->next;
-        carlist->last = NULL;
+        if(carlist != NULL){
+            carlist->last = NULL;
+        }
     } else {
         (*p)->last->next = (*p)->next;
         if((*p)->next != NULL){

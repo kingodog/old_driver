@@ -36,4 +36,7 @@ Car *get_right_road_first_car(Cross * corss, int self_road_id);
 Car *get_across_road_first_car(Cross * corss, int self_road_id);
 
 
+
+int all_car_running(Road *road, int road_num);  //test
+int a_road_car(Road *road);             //test
 #endif

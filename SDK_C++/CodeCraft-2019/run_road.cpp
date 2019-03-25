@@ -56,6 +56,7 @@ bool que_is_full(RoadQue *que){
 
 bool enqueue(Road *road, Car *car, int real_speed, int dir){
     RoadQue * que;
+    int clm;
     if(dir == FORWARD){
         que = road->forward;
     }else{
@@ -67,17 +68,27 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
         return false;
     }
 
-    que->tail[CLM] = road->length - real_speed;
-    que->lanes[que->tail[ROW]][que->tail[CLM]] = car;
+
+
+    // que->tail[CLM] = road->length - real_speed;                     //修改过   hcq
+    clm = get_max(road->length - real_speed, que->tail[CLM]);
+    que->lanes[que->tail[ROW]][clm] = car;
+
+    if( que->lanes[que->tail[ROW]][clm] != NULL){        //test
+       printf("thank you~");
+    }        
     car->status = END;
 
-    if(que->tail[CLM] < que->head[CLM] || que_is_empty(que)){
-        que->head[ROW] = que->tail[ROW];
-        que->head[CLM] = que->tail[CLM];
-    }
+    set_tail(road, que);
+    set_head(road, que);
 
-    que->tail[ROW] = (que->tail[ROW] + (que->tail[CLM] + 1) / road->length) % road->lanes_num;
-    que->tail[CLM] = (que->tail[CLM] + 1) % road->length;
+    // if(que->tail[CLM] < que->head[CLM] || que_is_empty(que)){       //可能有BUG  hcq
+    //     que->head[ROW] = que->tail[ROW];
+    //     que->head[CLM] = que->tail[CLM];
+    // }
+
+    // que->tail[ROW] = (que->tail[ROW] + (que->tail[CLM] + 1) / road->length) % road->lanes_num;
+    // que->tail[CLM] = (que->tail[CLM] + 1) % road->length;
 
     return true;
 }
@@ -97,6 +108,8 @@ int cross_through(Road *road, Car *car, int distance, RoadQue * que){
                     } else {            //可以放车
                         que->lanes[i][j+1] = car;
                         car->status =END;
+                        set_tail(road, que);
+                        set_head(road, que);
                         return COME_ON;         
                     }
                 }
@@ -107,12 +120,14 @@ int cross_through(Road *road, Car *car, int distance, RoadQue * que){
         }
         que->lanes[i][road->length - distance] = car;           //改行有足够距离停放
         car->status =END;
+        set_tail(road, que);
+        set_head(road, que);
         return COME_ON; 
     }
     return GET_OUT;             //每行都是  END 在结尾
 }
 
-bool get_waiting_head(Road *road, int dir, int *pos){
+bool get_waiting_head(Road *road, int dir, int *pos){    //没看 hcq
     RoadQue * que;
     if(dir == FORWARD){
         que = road->forward;
@@ -143,7 +158,7 @@ bool get_waiting_head(Road *road, int dir, int *pos){
     }
 }
 
-Car *dequeue(Road *road, int dir){
+Car *dequeue(Road *road, int dir){  //没看 hcq
     RoadQue * que;
     if(dir == FORWARD){
         que = road->forward;
@@ -184,10 +199,10 @@ Car *dequeue(Road *road, int dir){
     return tmp;
 }
 
-void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed){
-    if(curr_row == que->tail[ROW] && curr_column == (columns_num - 1)){
-        que->tail[CLM] = curr_column - real_speed + 1;
-    }
+void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, int real_speed, Road *road){
+    // if(curr_row == que->tail[ROW] && curr_column == (columns_num - 1)){          //待检验 hcq
+    //     que->tail[CLM] = curr_column - real_speed + 1;
+    // }
 
     Car *tmp = que->lanes[curr_row][curr_column];
     que->lanes[curr_row][curr_column] = NULL;
@@ -195,10 +210,13 @@ void pass_through(RoadQue *que, int curr_row, int curr_column, int columns_num, 
     que->lanes[curr_row][curr_column] = tmp;
     tmp->status = END;
 
-    if(curr_column < que->head[CLM] || (curr_column == que->head[CLM] && curr_row < que->head[ROW])){
-        que->head[ROW] = curr_row;
-        que->head[CLM] = curr_column;
-    }
+    set_tail(road, que);                //新添加
+    set_head(road, que);
+
+    // if(curr_column < que->head[CLM] || (curr_column == que->head[CLM] && curr_row < que->head[ROW])){   //待检验 hcq
+    //     que->head[ROW] = curr_row;
+    //     que->head[CLM] = curr_column;
+    // }
 }
 
 
@@ -225,7 +243,7 @@ void dispatch_cars_on_road(Road *road){
                         curr->status = WAIT;
                         block = j;
                     }else{
-                        pass_through(que, i, j, road->length, speed);
+                        pass_through(que, i, j, road->length, speed, road);
                         block = j - speed;
                     }
                 }else{
@@ -233,8 +251,8 @@ void dispatch_cars_on_road(Road *road){
                         curr->status = WAIT;
                         block = j;
                     }else{
-                        pass_through(que, i, j, road->length, speed);
-                        block = j - speed;
+                        pass_through(que, i, j, road->length, speed, road);
+                        block = j - speed;                  
                     }
                 }
 
@@ -269,40 +287,39 @@ void reset_all_car_to_ready(Road *road, int road_num){
     }
 }
 
-void set_head(Road *road){
+void set_head(Road *road, RoadQue *que){
     int i, j, k;
-    for(k = 0; k <= road->bothway; k++){
-        RoadQue * que = (k == 0) ? road->forward : road->back;
-        for(j = 0; j < road->length; j++){
-            for(i = 0; i < road->lanes_num; i++){
-                if(que->lanes[i][j]){
-                    que->head[ROW] = i;
-                    que->head[CLM] = j;
-                    return; 
-                }
+    for(j = 0; j < road->length; j++){
+        for(i = 0; i < road->lanes_num; i++){
+            if(que->lanes[i][j]){
+                que->head[ROW] = i;
+                que->head[CLM] = j;
+                return; 
             }
-        }
-        
-        if(j >= road->length || i >= road->lanes_num){
-            que->head[ROW] = -1;
-            que->head[CLM] = -1;
         }
     }
+    
+    if(j >= road->length || i >= road->lanes_num){
+        que->head[ROW] = -1;
+        que->head[CLM] = -1;
+    }
+
 }
 
-void set_tail(Road *road){
-    int i, j, k;
-    for(k = 0; k <= road->bothway; k++){
-        RoadQue * que = (k == 0) ? road->forward : road->back;
-        for(i = 0; i < road->lanes_num; i++){
-            for(j = road->length - 1; j >= 0 ; j--){
-                if(que->lanes[i][j]){
-                    que->tail[ROW] = (i + (j + 1) / road->length) % road->lanes_num;
-                    que->tail[CLM] = (j + 1) % road->length;
-                    return; 
-                }
+void set_tail(Road *road, RoadQue *que){
+    int i, j;
+    for(i = 0; i < road->lanes_num; i++){
+        for(j = road->length - 1; j >= 0 ; j--){
+            if(que->lanes[i][j]){
+                que->tail[ROW] = (i + (j + 1) / road->length) % road->lanes_num;
+                que->tail[CLM] = (j + 1) % road->length;
+                return; 
             }
         }
+    }
+    if(j >= road->length || i >= road->lanes_num){
+        que->tail[ROW] = 0;
+        que->tail[CLM] = 0;
     }
 }
 

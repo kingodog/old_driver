@@ -268,6 +268,45 @@ void reset_all_car_to_ready(Road *road, int road_num){
         }
     }
 }
+
+void set_head(Road *road){
+    int i, j, k;
+    for(k = 0; k <= road->bothway; k++){
+        RoadQue * que = (k == 0) ? road->forward : road->back;
+        for(j = 0; j < road->length; j++){
+            for(i = 0; i < road->lanes_num; i++){
+                if(que->lanes[i][j]){
+                    que->head[ROW] = i;
+                    que->head[CLM] = j;
+                    return; 
+                }
+            }
+        }
+        
+        if(j >= road->length || i >= road->lanes_num){
+            que->head[ROW] = -1;
+            que->head[CLM] = -1;
+        }
+    }
+}
+
+void set_tail(Road *road){
+    int i, j, k;
+    for(k = 0; k <= road->bothway; k++){
+        RoadQue * que = (k == 0) ? road->forward : road->back;
+        for(i = 0; i < road->lanes_num; i++){
+            for(j = road->length - 1; j >= 0 ; j--){
+                if(que->lanes[i][j]){
+                    que->tail[ROW] = (i + (j + 1) / road->length) % road->lanes_num;
+                    que->tail[CLM] = (j + 1) % road->length;
+                    return; 
+                }
+            }
+        }
+    }
+}
+
+
 //测试
 // int main(){
 //     Road *road = (Road *)malloc(sizeof(Road));

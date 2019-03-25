@@ -52,6 +52,7 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
                 road_map[next_step]->back_surplus_flow -= real_speed;
                 road_map[next_step]->pre_back_surplus_flow = road_map[next_step]->back_surplus_flow;
             }
+            printf("id : %d\n",p->car->id);
             p->car->project->start_time = time;
             p->car->status = END;
             car_new_a_project_road(p->car, next_step);
@@ -196,8 +197,11 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             lock = 0;
                             *end_flag = 0;                                  //可能可优化
                             adjust_a_lane(j, road->length, way->lanes[i], road->limit);
-                        } else if (way->lanes[i][j]->next_dir == -1){            //此路口为终点
-                            way->lanes[i][j]->status = END;
+                            set_tail(road);
+                            set_head(road);
+                        } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
+                            printf("~~~~~~~~~arrive: %d\n", way->lanes[i][j]->id);   //test
+                            way->lanes[i][j]->status = ARRIVE;
                             way->lanes[i][j] = NULL;
                             running_car_num --;
                             surplus_map_capacity += speed;
@@ -205,6 +209,8 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             *end_flag = 0;                      //可能可优化
                             *curr_flow = *curr_flow + speed;
                             adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                            set_tail(road);
+                            set_head(road);
                         } else {
                             next_real_speed = get_min(road_map[way->lanes[i][j]->next_step]->limit, way->lanes[i][j]->speed);
                             if(way->lanes[i][j]->next_dir == STRAIGHT){
@@ -249,9 +255,10 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                 lock = 0;
                                 way->lanes[i][j] = NULL;
                                 adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                                set_tail(road);
+                                set_head(road);
                                 break; 
                             } else {
-                                // printf("%d\n",cross->road[m]->lanes_num);  //test
                                 switch(cross_through(cross->road[m], way->lanes[i][j], next_real_speed, cross->road_dir_out[m])){
                                     case COME_ON:
                                         way->lanes[i][j]->status = END;
@@ -268,11 +275,10 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                         *end_flag = 0;
                                         lock = 0;
                                         adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                                        set_tail(road);
+                                        set_head(road);
                                     break;
                                     case PLEASE_WAIT:               //本条路结束 遍历
-                                    // if(way->lanes[i][j]->id == 10060){   //test
-                                    //     switch(cross_through(cross->road[m], way->lanes[i][j], next_real_speed, cross->road_dir_out[m]));
-                                    // }
                                         all_car_end = 0;
                                     return;
                                     case GET_OUT:
@@ -284,6 +290,8 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                         way->lanes[i][j] = NULL;
                                         *end_flag = 0;
                                         adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                                        set_tail(road);
+                                        set_head(road);
                                     break;
                                 }
                             } 
@@ -306,7 +314,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
 
 void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            //todo   可能出错
     int i;
-    int j;   //test
+
     int distance;
     int real_speed;
     int move_distance;
@@ -316,15 +324,6 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
     {
         if(lane[i] !=NULL){
             if(lane[i]->status ==END){
-                // for(j = i; j< end;j++){             //test
-                //     if(lane[j] != NULL){
-                //         if(lane[j]->status != END){
-                //         printf("wrong~   2\n");
-                //     }
-                //     }
-                   
-                // }
-
                 return ;
             }
             real_speed = get_min(lane[i]->speed, limit_speed);
@@ -334,13 +333,7 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
                     break;
                 }
             }                               //前车状态一定为END，   可考虑用来测试代码
-//             if(pre_car != NULL){
-//                  if(pre_car->status != END){
-//                      printf("wrong~   1\n");
-//                  }
-//             }
-           
-            
+
             distance --; 
             if(pre_car == NULL){
                 if(real_speed <= distance){

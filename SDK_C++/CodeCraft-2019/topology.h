@@ -7,8 +7,8 @@
 #include "car.h"
 #include "run_cross.h"
 
-#define NO_CONNECT              (0x1<<23)
-#define INFINITY_INT            (0x1<<20)
+#define NO_CONNECT              (0x1<<21)
+#define INFINITY_INT            (0x1<<18)
 #define NIL                     (-1)
 // #define NO_CONNECT              (-1)
 

@@ -133,6 +133,9 @@ void get_cross_imformation(char *path,int *cross_num, Cross **cross){
 
                     }
                 }
+
+
+
             }
         }
         
@@ -188,6 +191,21 @@ void  sort_cross_road_id(Cross *cross){
             printf("sort_cross_road_id is wrong!\n");
             break;
     }
+
+    cross->total_que = 0;                       //初始化排序好的邻接的que
+    for(i = 0; i < cross->total_road; i++){                  
+        if(road_map[cross->road_id_sorted[i]]->cross_id_start == cross->id){
+            if(road_map[cross->road_id_sorted[i]]->back != NULL){
+                cross->road_dir_sorted[cross->total_que] = road_map[cross->road_id_sorted[i]]->back;
+                cross->total_que++;
+            }
+        } else {
+            if(road_map[cross->road_id_sorted[i]]->forward != NULL){
+                cross->road_dir_sorted[cross->total_que]  = road_map[cross->road_id_sorted[i]]->forward;
+                cross->total_que++;
+            }
+        }
+    }   
 }
 
 void exchange_int_num(int *a, int *b){

@@ -22,6 +22,9 @@ typedef struct
 
     RoadQue *road_dir[4];   //代表的是该路口管理的车道
     RoadQue *road_dir_out[4];   //代表的是该路口可以注入的车道
+
+    int total_que;
+    RoadQue *road_dir_sorted[4];
 }Cross;
 
 void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num);

@@ -79,7 +79,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                 if(que[i][j]->id==10018){            //test
                     k = que[i][j]->id;
                 }
-                if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
+                if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_start,this_road->cross_id_end);
                     if(que[i][j]->next_step == -1){             //到达目的地
                         que[i][j]->next_dir = STRAIGHT;  //到达的   与  直行同优先级

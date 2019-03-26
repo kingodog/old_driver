@@ -74,9 +74,9 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
     clm = get_max(road->length - real_speed, que->tail[CLM]);
     que->lanes[que->tail[ROW]][clm] = car;
 
-    if( que->lanes[que->tail[ROW]][clm] != NULL){        //test
-       printf("thank you~");
-    }        
+    // if( que->lanes[que->tail[ROW]][clm] != NULL){        //test
+    //    printf("thank you~");
+    // }        
     car->status = END;
 
     set_tail(road, que);

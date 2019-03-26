@@ -1,7 +1,7 @@
 #include "run_cross.h"
 #include "read_file.h"
 #include "project.h"
-#define ALPHA    (float(0.1))
+#define ALPHA    (float(0.8))
 
 extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
@@ -155,18 +155,10 @@ void run_all_cross(Cross *cross, int cross_num){    //todo
 void run_a_cross(Cross *cross){  
     int end_flag = 0;
     int i;
-    RoadQue *road[4];
-    for(i = 0; i < cross->total_road; i++){                     //可优化
-        if(road_map[cross->road_id_sorted[i]]->cross_id_start == cross->id){
-            road[i] = road_map[cross->road_id_sorted[i]]->back;
-        } else {
-            road[i] = road_map[cross->road_id_sorted[i]]->forward;
-        }
-    }
     while(end_flag == 0){
         end_flag = 1;
-        for(i = 0; i < cross->total_road; i++){
-            run_a_road(cross, road[i], road_map[cross->road_id_sorted[i]], &end_flag);          //可优化（不用地图）
+        for(i = 0; i < cross->total_que; i++){
+            run_a_road(cross, cross->road_dir_sorted[i], road_map[cross->road_id_sorted[i]], &end_flag);          //可优化（不用地图）
         }
     }    
 }
@@ -181,7 +173,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
     int next_real_speed;
     int *curr_flow;
     int *next_flow;
-
+    static int k;
     if(que_is_empty(way)){   
         return ;
     }
@@ -234,8 +226,8 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             set_head(road, way);
                         } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
                 
-                            // k++;
-                            // printf("~~~~~~~~~arrive: %d_____%d\n", way->lanes[i][j]->id,k);   //test
+                            k++;
+                            printf("~~~~~~~~~arrive: %d_____%d\n", time,k);   //test
                             way->lanes[i][j]->status = ARRIVE;
                             way->lanes[i][j] = NULL;
                             running_car_num --;

@@ -69,14 +69,14 @@ bool enqueue(Road *road, Car *car, int real_speed, int dir){
     }
 
 
-
     // que->tail[CLM] = road->length - real_speed;                     //修改过   hcq
     clm = get_max(road->length - real_speed, que->tail[CLM]);
-    que->lanes[que->tail[ROW]][clm] = car;
-
     // if( que->lanes[que->tail[ROW]][clm] != NULL){        //test
     //    printf("thank you~");
-    // }        
+    // }   
+    que->lanes[que->tail[ROW]][clm] = car;
+
+     
     car->status = END;
 
     set_tail(road, que);
@@ -311,8 +311,11 @@ void set_tail(Road *road, RoadQue *que){
     for(i = 0; i < road->lanes_num; i++){
         for(j = road->length - 1; j >= 0 ; j--){
             if(que->lanes[i][j]){
-                que->tail[ROW] = (i + (j + 1) / road->length) % road->lanes_num;
-                que->tail[CLM] = (j + 1) % road->length;
+                if(j == road->length - 1){
+                    break;
+                }
+                que->tail[ROW] = i;
+                que->tail[CLM] = j + 1;
                 return; 
             }
         }

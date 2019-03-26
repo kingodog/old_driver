@@ -1,6 +1,6 @@
+#include "time.h"  //test
 #include "project.h"
 #include "read_file.h"
-extern unsigned int time;
 
 extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
@@ -9,7 +9,7 @@ extern CarList *carlist;
 extern CarList *carlist_sroted;
 extern int running_car_num;
 
-extern unsigned int time;
+extern unsigned int sys_time;
 
 extern int all_car_end ;
 extern int end_put_car ;
@@ -20,23 +20,60 @@ extern int map_capacity;
 extern int surplus_map_capacity;
 extern int ** cross_to_road;
 
+
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
+    clock_t start, finish;  //test
+    double duration;
+
     int no_car = 0;
-    time =10;
+    sys_time =10;
     reset_all_pre_flow(road, road_num);
     put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车
-    time ++;
+    sys_time ++;
     reset_all_car_to_ready(road, road_num);
     while(carlist != NULL){
+     
+        start = clock(); 
         run_all_road(road, road_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("run_all_road:%lfs\n",duration);
+
+        start = clock(); 
         project_all_waiting_car(road, road_num, cross, cross_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("project_all_waiting_car:%lfs\n",duration);
+
+        start = clock(); 
         run_all_cross(cross, cross_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("run_all_cross:%lfs\n",duration);
+
+        start = clock();
         reset_all_pre_flow(road, road_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("reset_all_pre_flow:%lfs\n",duration);
+
+        start = clock();
         put_car(car, road, cross, cross_num, road_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("put_car:%lfs\n",duration);
+
+        start = clock();
         reset_all_car_to_ready(road, road_num);
+        finish = clock(); 
+        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        printf("reset_all_car_to_ready:%lfs\n",duration);
+
+
+
         printf("ture_all_car : %d\n",all_car_running(road, road_num));
-        time ++;
-        printf("\ntime = %d \n", time);
+        sys_time ++;
+        printf("\ntime = %d \n", sys_time);
     }
 
     reset_all_pre_flow(road, road_num);
@@ -48,11 +85,11 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         reset_all_pre_flow(road, road_num);
         reset_all_car_to_ready(road, road_num);
         printf("ture_all_car : %d\n",all_car_running(road, road_num));
-        time ++;
-        printf("\ntime = %d \n", time);
+        sys_time ++;
+        printf("\ntime = %d \n", sys_time);
     }
 
-    printf("\ntime = %d \n", time);
+    printf("\ntime = %d \n", sys_time);
     return;
 }
 

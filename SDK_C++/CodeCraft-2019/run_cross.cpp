@@ -1,7 +1,8 @@
 #include "run_cross.h"
 #include "read_file.h"
 #include "project.h"
-#define ALPHA    (float(0.8))
+
+#define ALPHA    (float(0.3))
 
 extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
@@ -10,7 +11,7 @@ extern CarList *carlist;
 extern CarList *carlist_sroted;
 extern int running_car_num;
 
-extern unsigned int time;
+extern unsigned int sys_time;
 
 extern int all_car_end ;
 extern int end_put_car ;
@@ -58,7 +59,7 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
             // // printf("22222222222ture_all_car : %d\n",all_car_running(road, road_num));   //test 
             // num ++;
             // printf("all_put_num : %d\n",num);   //test
-            p->car->project->start_time = time;
+            p->car->project->start_time = sys_time;
             p->car->status = END;
             car_new_a_project_road(p->car, next_step);
             p->car->next_step = -1;
@@ -71,6 +72,7 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
         }
 
     }
+    return;
 }
 
 
@@ -140,7 +142,7 @@ void run_all_cross(Cross *cross, int cross_num){    //todo
             run_a_cross(&(cross[i]));
         }
         if(lock == 1 && all_car_end == 0){
-            printf("time = %d\n", time);
+            printf("sys_time = %d\n", sys_time);
             printf("running_car_num = %d\n", running_car_num);
             printf("surplus_map_capacity = %d\n", surplus_map_capacity);
             printf("\n***************************lock***************************!\n");
@@ -227,7 +229,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                         } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
                 
                             k++;
-                            printf("~~~~~~~~~arrive: %d_____%d\n", time,k);   //test
+                            printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
                             way->lanes[i][j]->status = ARRIVE;
                             way->lanes[i][j] = NULL;
                             running_car_num --;

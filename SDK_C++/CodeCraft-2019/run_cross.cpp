@@ -27,7 +27,7 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
     p = carlist;
     RoadQue *que;
     int real_speed;
-    static  int num=0;   //test
+    // static  int num=0;   //test
     int capacity_conversion = map_capacity * ALPHA;
     while(surplus_map_capacity > capacity_conversion && p !=NULL){
         next_step = get_next_road(p->car->start, p->car->end, road, cross, road_num, cross_num, p->car->speed, NIL, NIL);
@@ -54,9 +54,10 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
                 road_map[next_step]->back_surplus_flow -= real_speed;
                 road_map[next_step]->pre_back_surplus_flow = road_map[next_step]->back_surplus_flow;
             }
-            printf("id : %d\n",p->car->id);             //test
-            // printf("22222222222ture_all_car : %d\n",all_car_running(road, road_num));   //test 
-                  printf("put_num : %d\n",num++);   //test
+            // printf("id : %d\n",p->car->id);             //test
+            // // printf("22222222222ture_all_car : %d\n",all_car_running(road, road_num));   //test 
+            // num ++;
+            // printf("all_put_num : %d\n",num);   //test
             p->car->project->start_time = time;
             p->car->status = END;
             car_new_a_project_road(p->car, next_step);
@@ -137,9 +138,7 @@ void run_all_cross(Cross *cross, int cross_num){    //todo
         lock = 1;
         for(i = 0; i < cross_num; i++){
             run_a_cross(&(cross[i]));
-            // printf("\nqile  \n");
         }
-        // printf("hcq  \n");
         if(lock == 1 && all_car_end == 0){
             printf("time = %d\n", time);
             printf("running_car_num = %d\n", running_car_num);
@@ -149,7 +148,6 @@ void run_all_cross(Cross *cross, int cross_num){    //todo
         }
     }
 
-    printf("\hxq  \n");
 }
 
 
@@ -168,7 +166,6 @@ void run_a_cross(Cross *cross){
     while(end_flag == 0){
         end_flag = 1;
         for(i = 0; i < cross->total_road; i++){
-            
             run_a_road(cross, road[i], road_map[cross->road_id_sorted[i]], &end_flag);          //可优化（不用地图）
         }
     }    
@@ -184,7 +181,6 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
     int next_real_speed;
     int *curr_flow;
     int *next_flow;
-    // static int k=0;  //test
 
     if(que_is_empty(way)){   
         return ;
@@ -233,7 +229,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             way->lanes[i][j] = NULL;
                             lock = 0;
                             *end_flag = 0;                                  //可能可优化
-                            adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                            adjust_a_lane(j+1, road->length, way->lanes[i], road->limit);
                             set_tail(road, way);
                             set_head(road, way);
                         } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
@@ -247,7 +243,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             lock = 0;
                             *end_flag = 0;                      //可能可优化
                             *curr_flow = *curr_flow + speed;
-                            adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                            adjust_a_lane(j+1, road->length, way->lanes[i], road->limit);
                             set_tail(road, way);
                             set_head(road, way);
                         } else {
@@ -293,7 +289,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                 *end_flag = 0;
                                 lock = 0;
                                 way->lanes[i][j] = NULL;
-                                adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                                adjust_a_lane(j+1, road->length, way->lanes[i], road->limit);
                                 set_tail(road, way);
                                 set_head(road, way);
                                 break; 
@@ -323,22 +319,16 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                     case GET_OUT:
                                         lock = 0;
                                         *end_flag = 0;
+                                        way->lanes[i][j]->status = END;
+                                        way->lanes[i][j]->next_dir = -1;
+                                        way->lanes[i][j]->next_step = -1;
                                         if(j != 0){
                                             way->lanes[i][0] = way->lanes[i][j];
-                                            way->lanes[i][0]->status = END;
-                                            way->lanes[i][0]->next_dir = -1;
-                                            way->lanes[i][0]->next_step = -1;
                                             way->lanes[i][j] = NULL;
-                                            adjust_a_lane(j, road->length, way->lanes[i], road->limit);
-                                            set_tail(road, way);
-                                            set_head(road, way);
-                                        } else {
-                                            way->lanes[i][0]->status = END;
-                                            way->lanes[i][0]->next_dir = -1;
-                                            way->lanes[i][0]->next_step = -1;
-                                        }
-                                      
-                                     
+                                        } 
+                                        adjust_a_lane(j+1, road->length, way->lanes[i], road->limit);
+                                        set_tail(road, way);
+                                        set_head(road, way);
                                     break;
                                 }
                             } 
@@ -361,10 +351,12 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
 
 void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            //todo   可能出错
     int i;
-
     int distance;
     int real_speed;
     int move_distance;
+    if(start >= end){
+        return;
+    }
     Car *car;
     Car *pre_car = NULL;
     for(i = start; i < end; i++)                
@@ -374,6 +366,7 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
                 return ;
             }
             real_speed = get_min(lane[i]->speed, limit_speed);
+            pre_car = NULL; 
             for(distance = 1; distance <= i; distance++){             //可优化 保存之前的
                 if(lane[i - distance] != NULL){
                     pre_car = lane[i - distance];
@@ -393,11 +386,18 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
                 }
             } else {
                 move_distance = get_min(real_speed, distance);
-                lane[i - move_distance] = lane[i];
-                lane[i] = NULL;
-                lane[i - move_distance]->status = END;
+               
+                if(move_distance != 0){
+                    lane[i - move_distance] = lane[i];
+                    lane[i] = NULL;
+                    lane[i - move_distance]->status = END;
+                } else {
+                    lane[i]->status = END;
+                }
+
                 continue;
             }
+           
         }
     }
 }

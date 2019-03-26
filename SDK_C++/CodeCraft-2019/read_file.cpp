@@ -473,10 +473,10 @@ void build_cross_num_to_road_num_matrix(int cross_num, int road_num, Cross *cros
             if(i  == j){
                 continue;
             }  
-            for(k = 1; k < 4; k++){
+            for(k = 0; k < 4; k++){
                 for( l = 0; l < 4; l++)
                 {
-                    if(cross[i].road_id[k] == cross[j].road_id[l]){
+                    if(cross[i].road_id[k] == cross[j].road_id[l]&& cross[i].road_id[k] != NIL){
                         cross_to_road[i][j] = cross[i].road_id[k];
                         cross_to_road[j][i] = cross[i].road_id[k];
                         break;                   //节约点点时间

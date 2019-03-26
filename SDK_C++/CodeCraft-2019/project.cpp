@@ -34,8 +34,9 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         reset_all_pre_flow(road, road_num);
         put_car(car, road, cross, cross_num, road_num);
         reset_all_car_to_ready(road, road_num);
-        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
+        printf("ture_all_car : %d\n",all_car_running(road, road_num));
         time ++;
+        printf("\ntime = %d \n", time);
     }
 
     reset_all_pre_flow(road, road_num);
@@ -48,6 +49,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         reset_all_car_to_ready(road, road_num);
         printf("ture_all_car : %d\n",all_car_running(road, road_num));
         time ++;
+        printf("\ntime = %d \n", time);
     }
 
     printf("\ntime = %d \n", time);
@@ -107,10 +109,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
             for( j = 0; j < this_road->length; j++)
             {
                 if(que[i][j] !=NULL){
-                    if(que[i][j]->id==10018){            //test
-                    k = que[i][j]->id;
-                    }
-                    if(que[i][j]->status == WAIT && i < get_min(que[i][j]->speed, this_road->limit)){
+                    if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_end, this_road->cross_id_start);
                         if(que[i][j]->next_step == -1){             //到达目的地
                             que[i][j]->next_dir = STRAIGHT;

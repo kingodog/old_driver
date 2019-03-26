@@ -15,8 +15,11 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
         char *car_path, char *cross_path, char *road_path){
 
     get_road_imformation(road_path, road_num, road);            //不可改变先后顺序
-    get_cross_imformation(cross_path,cross_num, cross);
-    get_car_imformation(car_path,car_num, car, road_num);
+    merge_sort_roads(*road, 0, (*road_num-1));
+    get_cross_imformation(cross_path, cross_num, cross);
+    merge_sort_crosses(*cross, 0, (*cross_num-1));
+    get_car_imformation(car_path, car_num, car, road_num);
+    merge_sort_cars(*car, 0, (*car_num-1));
     sort_car_by_speed_and_creat_list(*car, *car_num);
     build_cross_num_to_road_num_matrix(*cross_num, *road_num, *cross, *road);
 }
@@ -356,30 +359,38 @@ void new_a_road_road_que(Road *road){                    //建立道路供车辆
     }
 }
 
+
+
 void merge_roads(Road *array, int left, int mid, int right){
     int i = 0, j = 0, k = 0;
-    int temp_l[mid - left + 1], temp_r[right - mid];
+    Road *tmp_l = (Road *)malloc(sizeof(Road) * (mid - left + 1));
+    Road *tmp_r = (Road *)malloc(sizeof(Road) * (right - mid));
+
     for(i = 0; i < mid - left + 1; i++){
-        temp_l[i] = array[left + i].id;
+        tmp_l[i] = array[left + i];
     }
     for(j = 0; j < right - mid; j++){
-        temp_r[j] = array[mid + j + 1].id;
+        tmp_r[j] = array[mid + j + 1];
     }
     i = j = 0;
     for(k = left; i < mid - left + 1 && j < right - mid; k++){
-        if(temp_l[i] > temp_r[j]){
-            array[k] = array[j++];
+        if(tmp_l[i].id > tmp_r[j].id){
+            array[k] = tmp_r[j++];
         }else{
-            array[k] = array[i++];
+            array[k] = tmp_l[i++];
         }
     }
     while(i < mid - left + 1){
-        array[k++] = array[i++];
+        array[k++] = tmp_l[i++];
     }
     while(j < right - mid){
-        array[k++] = array[j++];
+        array[k++] = tmp_r[j++];
     }
+
+    free(tmp_l);
+    free(tmp_r);
 }
+
 
 void merge_sort_roads(Road *array, int left, int right){
     int mid = 0;
@@ -394,28 +405,34 @@ void merge_sort_roads(Road *array, int left, int right){
 
 void merge_crosses(Cross *array, int left, int mid, int right){
     int i = 0, j = 0, k = 0;
-    int temp_l[mid - left + 1], temp_r[right - mid];
+    Cross *tmp_l = (Cross *)malloc(sizeof(Cross) * (mid - left + 1));
+    Cross *tmp_r = (Cross *)malloc(sizeof(Cross) * (right - mid));
+
     for(i = 0; i < mid - left + 1; i++){
-        temp_l[i] = array[left + i].id;
+        tmp_l[i] = array[left + i];
     }
     for(j = 0; j < right - mid; j++){
-        temp_r[j] = array[mid + j + 1].id;
+        tmp_r[j] = array[mid + j + 1];
     }
     i = j = 0;
     for(k = left; i < mid - left + 1 && j < right - mid; k++){
-        if(temp_l[i] > temp_r[j]){
-            array[k] = array[j++];
+        if(tmp_l[i].id > tmp_r[j].id){
+            array[k] = tmp_r[j++];
         }else{
-            array[k] = array[i++];
+            array[k] = tmp_l[i++];
         }
     }
     while(i < mid - left + 1){
-        array[k++] = array[i++];
+        array[k++] = tmp_l[i++];
     }
     while(j < right - mid){
-        array[k++] = array[j++];
+        array[k++] = tmp_r[j++];
     }
+
+    free(tmp_l);
+    free(tmp_r);
 }
+
 
 void merge_sort_crosses(Cross *array, int left, int right){
     int mid = 0;
@@ -427,31 +444,36 @@ void merge_sort_crosses(Cross *array, int left, int right){
     }
 }
 
-
 void merge_cars(Car *array, int left, int mid, int right){
     int i = 0, j = 0, k = 0;
-    int temp_l[mid - left + 1], temp_r[right - mid];
+    Car *tmp_l = (Car *)malloc(sizeof(Car) * (mid - left + 1));
+    Car *tmp_r = (Car *)malloc(sizeof(Car) * (right - mid));
+
     for(i = 0; i < mid - left + 1; i++){
-        temp_l[i] = array[left + i].id;
+        tmp_l[i] = array[left + i];
     }
     for(j = 0; j < right - mid; j++){
-        temp_r[j] = array[mid + j + 1].id;
+        tmp_r[j] = array[mid + j + 1];
     }
     i = j = 0;
     for(k = left; i < mid - left + 1 && j < right - mid; k++){
-        if(temp_l[i] > temp_r[j]){
-            array[k] = array[j++];
+        if(tmp_l[i].id > tmp_r[j].id){
+            array[k] = tmp_r[j++];
         }else{
-            array[k] = array[i++];
+            array[k] = tmp_l[i++];
         }
     }
     while(i < mid - left + 1){
-        array[k++] = array[i++];
+        array[k++] = tmp_l[i++];
     }
     while(j < right - mid){
-        array[k++] = array[j++];
+        array[k++] = tmp_r[j++];
     }
+
+    free(tmp_l);
+    free(tmp_r);
 }
+
 
 void merge_sort_cars(Car *array, int left, int right){
     int mid = 0;

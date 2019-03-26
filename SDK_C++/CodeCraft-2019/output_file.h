@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "car.h"
 
-#define OUTPUT_PATH       "./SDK_C++/config/output.txt"
+#define OUTPUT_PATH       (char *)"./SDK_C++/config/output.txt"
 
 
 

@@ -27,9 +27,9 @@ using namespace std;
 
 #endif
 
-#define CAR_PATH        "./SDK_C++/config/car.txt"
-#define CROSS_PATH      "./SDK_C++/config/cross.txt"
-#define ROAD_PATH       "./SDK_C++/config/road.txt"
+#define CAR_PATH        (char *)"./SDK_C++/config/car.txt"
+#define CROSS_PATH      (char *)"./SDK_C++/config/cross.txt"
+#define ROAD_PATH       (char *)"./SDK_C++/config/road.txt"
 #define DEFEATED        ((int)-1)
 #define SUCCESSFUL      ((int)0)
 

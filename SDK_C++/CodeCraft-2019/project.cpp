@@ -4,6 +4,7 @@
 
 extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
+extern hash_map<int, int> cross_id_map;
 
 extern CarList *carlist;
 extern CarList *carlist_sroted;
@@ -189,13 +190,13 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     int *flag = (int *)malloc(sizeof(int)*cross_num);
 
     int i, j, k = 0;
-    int src_id = ((int)(cross_map[start]) - (int)(cross))/sizeof(Cross);
+    int src_id = cross_id_map[start];
 
     int shiedl_start = NIL; 
     int shiedl_end = NIL;
     if(this_road_start_id != NIL){
-        shiedl_start = ((int)(cross_map[this_road_start_id]) - (int)(cross))/sizeof(Cross);
-        shiedl_end = ((int)(cross_map[this_road_end_id]) - (int)(cross))/sizeof(Cross);
+        shiedl_start = cross_id_map[this_road_start_id];
+        shiedl_end = cross_id_map[this_road_end_id];
 
         weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前的 反向到
     }
@@ -239,7 +240,7 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     free_a_matrix(weight_matrix, cross_num);
 
     //找到end在cross数组中id
-    int end_id = ((int)(cross_map[end]) - (int)(cross))/sizeof(Cross);
+    int end_id = cross_id_map[end];
     while(prev[end_id] != NIL){
         end_id = prev[end_id];
     }

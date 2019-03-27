@@ -11,6 +11,7 @@
 
 hash_map<int, Road *> road_map;
 hash_map<int, Cross *> cross_map;
+hash_map<int, int > cross_id_map;
 unsigned int sys_time = 0;
 CarList *carlist;
 CarList *carlist_sroted;

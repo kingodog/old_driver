@@ -8,6 +8,7 @@ extern int ** cross_to_road;
 
 extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
+extern hash_map<int, int> cross_id_map;
 extern int map_capacity;
 extern int surplus_map_capacity;
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
@@ -140,7 +141,7 @@ void get_cross_imformation(const char *path,int *cross_num, Cross **cross){
         }
         
         cross_map[(*cross)[i].id] = &(*cross)[i];
-
+        cross_id_map[(*cross)[i].id] = i;
 
         i++;
     }

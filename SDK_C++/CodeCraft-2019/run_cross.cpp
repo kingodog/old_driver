@@ -31,9 +31,9 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
     // static  int num=0;   //test
     int capacity_conversion = map_capacity * ALPHA;
     while(surplus_map_capacity > capacity_conversion && p !=NULL){
-        if(p->car->id==11046){            //test
-            printf(" ");
-        }
+        // if(p->car->id==11046){            //test
+        //     printf(" ");
+        // }
 
         next_step = get_next_road(p->car->start, p->car->end, road, cross, road_num, cross_num, p->car->speed, NIL, NIL);
         if(next_step == -1){
@@ -179,7 +179,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
     int next_real_speed;
     int *curr_flow;
     int *next_flow;
-    static int k;
+    // static int k;
     if(que_is_empty(way)){   
         return ;
     }
@@ -232,8 +232,8 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             set_head(road, way);
                         } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
                 
-                            k++;
-                            printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
+                            // k++;
+                            // printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
                             way->lanes[i][j]->status = ARRIVE;
                             way->lanes[i][j] = NULL;
                             running_car_num --;
@@ -301,9 +301,9 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                         } else {
                                             road_map[way->lanes[i][j]->next_step]->back_surplus_flow -= next_real_speed;
                                         }
-                                        if(way->lanes[i][j]->id==11046){            //test
-                                            printf(" ");
-                                        }
+                                        // if(way->lanes[i][j]->id==11046){            //test
+                                        //     printf(" ");
+                                        // }
 
 
                                         way->lanes[i][j]->next_dir = -1;

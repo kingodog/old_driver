@@ -31,6 +31,10 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
     // static  int num=0;   //test
     int capacity_conversion = map_capacity * ALPHA;
     while(surplus_map_capacity > capacity_conversion && p !=NULL){
+        if(p->car->id==11046){            //test
+            printf(" ");
+        }
+
         next_step = get_next_road(p->car->start, p->car->end, road, cross, road_num, cross_num, p->car->speed, NIL, NIL);
         if(next_step == -1){
              p = p->next;
@@ -160,7 +164,7 @@ void run_a_cross(Cross *cross){
     while(end_flag == 0){
         end_flag = 1;
         for(i = 0; i < cross->total_que; i++){
-            run_a_road(cross, cross->road_dir_sorted[i], road_map[cross->road_id_sorted[i]], &end_flag);          //可优化（不用地图）
+            run_a_road(cross, cross->road_dir_sorted[i], road_map[cross->corresponding_road_dir[i]], &end_flag);          //可优化（不用地图）
         }
     }    
 }
@@ -297,6 +301,11 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                         } else {
                                             road_map[way->lanes[i][j]->next_step]->back_surplus_flow -= next_real_speed;
                                         }
+                                        if(way->lanes[i][j]->id==11046){            //test
+                                            printf(" ");
+                                        }
+
+
                                         way->lanes[i][j]->next_dir = -1;
                                         way->lanes[i][j]->next_step = -1;
                                         *curr_flow = *curr_flow + speed;
@@ -373,6 +382,8 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
                 if(real_speed <= distance){
                     lane[i - real_speed] = lane[i];
                     lane[i] = NULL;
+                    lane[i - real_speed]->next_dir = -1;
+                    lane[i - real_speed]->next_step = -1;
                     lane[i - real_speed]->status = END;
                     continue;
                 } else {                //如果前面距离不够，直接溜
@@ -384,8 +395,12 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
                 if(move_distance != 0){
                     lane[i - move_distance] = lane[i];
                     lane[i] = NULL;
+                    lane[i - move_distance]->next_dir = -1;
+                    lane[i - move_distance]->next_step = -1;
                     lane[i - move_distance]->status = END;
                 } else {
+                    lane[i]->next_dir = -1;
+                    lane[i]->next_step = -1;
                     lane[i]->status = END;
                 }
 

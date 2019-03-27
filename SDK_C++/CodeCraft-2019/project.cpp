@@ -72,6 +72,9 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
 
 
         printf("ture_all_car : %d\n",all_car_running(road, road_num));
+        if(all_car_running(road, road_num)==0){
+            printf("~");
+        }
         sys_time ++;
         printf("\ntime = %d \n", sys_time);
     }
@@ -113,7 +116,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
         for( j = 0; j < this_road->length; j++)
         {
             if(que[i][j] !=NULL){
-                if(que[i][j]->id==10018){            //test
+                if(que[i][j]->id==11046){            //test
                     k = que[i][j]->id;
                 }
                 if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
@@ -146,6 +149,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
             for( j = 0; j < this_road->length; j++)
             {
                 if(que[i][j] !=NULL){
+                    if(que[i][j]->id==11046){            //test
+                        k = que[i][j]->id;
+                    }
                     if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_end, this_road->cross_id_start);
                         if(que[i][j]->next_step == -1){             //到达目的地
@@ -210,7 +216,7 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     //遍历除了start顶点的其他顶点
     for(i = 0; i < cross_num - 1; i++){
         //找到未标记的顶点的最短估计中最小者
-        int min = INFINITY_INT;
+        int min = NO_CONNECT;
         for(j = 0; j < cross_num; j++){
             if(flag[j] == UNSIGN && dist[j] < min){
                 min = dist[j];
@@ -220,8 +226,8 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
         flag[k] = SIGNED;
         //松弛
         for(j = 0; j < cross_num; j++){
-            int tmp = (weight_matrix[k][j] == INFINITY_INT ? INFINITY_INT : (min + weight_matrix[k][j]));//防止溢出
-            if(tmp == INFINITY_INT){
+            int tmp = (weight_matrix[k][j] == NO_CONNECT ? NO_CONNECT : (min + weight_matrix[k][j]));//防止溢出
+            if(tmp == NO_CONNECT){
                 continue;
             }
             if(flag[j] == UNSIGN && tmp < dist[j]){
@@ -253,7 +259,7 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
 
 
 
-int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){
+int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){          //需要更改 INFINITY_INT   
     int ***iteration_matrix;
     int ***precursor_matrix; 
     int i, j, k, l, m;

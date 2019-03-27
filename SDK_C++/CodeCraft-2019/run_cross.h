@@ -24,7 +24,8 @@ typedef struct
     RoadQue *road_dir_out[4];   //代表的是该路口可以注入的车道
 
     int total_que;
-    RoadQue *road_dir_sorted[4];
+    int corresponding_road_dir[4];      //对应road_dir_sorted的道路ID
+    RoadQue *road_dir_sorted[4];   //按照道路ID排序好的road_dir
 }Cross;
 
 void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num);

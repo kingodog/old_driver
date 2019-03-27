@@ -197,15 +197,17 @@ void  sort_cross_road_id(Cross *cross){
         if(road_map[cross->road_id_sorted[i]]->cross_id_start == cross->id){
             if(road_map[cross->road_id_sorted[i]]->back != NULL){
                 cross->road_dir_sorted[cross->total_que] = road_map[cross->road_id_sorted[i]]->back;
+                cross->corresponding_road_dir[cross->total_que] = cross->road_id_sorted[i];
                 cross->total_que++;
             }
         } else {
             if(road_map[cross->road_id_sorted[i]]->forward != NULL){
                 cross->road_dir_sorted[cross->total_que]  = road_map[cross->road_id_sorted[i]]->forward;
+                cross->corresponding_road_dir[cross->total_que] = cross->road_id_sorted[i];
                 cross->total_que++;
             }
         }
-    }   
+    }
 }
 
 void exchange_int_num(int *a, int *b){

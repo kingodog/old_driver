@@ -12,7 +12,7 @@ extern int map_capacity;
 extern int surplus_map_capacity;
 void get_imformation(int *car_num, int *cross_num, int *road_num, 
         Car **car, Cross **cross, Road **road, 
-        char *car_path, char *cross_path, char *road_path){
+        const char *car_path, const char *cross_path, const char *road_path){
 
     get_road_imformation(road_path, road_num, road);            //不可改变先后顺序
     merge_sort_roads(*road, 0, (*road_num-1));
@@ -24,7 +24,7 @@ void get_imformation(int *car_num, int *cross_num, int *road_num,
     build_cross_num_to_road_num_matrix(*cross_num, *road_num, *cross, *road);
 }
 
-void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
+void get_car_imformation(const char *path, int *car_num, Car **car, int *road_num){
 
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
@@ -73,7 +73,7 @@ void get_car_imformation(char *path, int *car_num, Car **car, int *road_num){
 }
 
 
-void get_cross_imformation(char *path,int *cross_num, Cross **cross){
+void get_cross_imformation(const char *path,int *cross_num, Cross **cross){
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
     char *str;
@@ -217,7 +217,7 @@ void exchange_int_num(int *a, int *b){
     *b = k;
 }
 
-void get_road_imformation(char *path,int *road_num, Road **road){
+void get_road_imformation(const char *path,int *road_num, Road **road){
     FILE *fp1 = fopen(path,"r");
     char StrLine[1024];
     char *str;

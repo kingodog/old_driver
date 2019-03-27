@@ -36,10 +36,10 @@ using namespace std;
 #define NOCAR           (NULL)
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 
-        Cross **cross, Road **road,char *car_path, char *cross_path, char *road_path);
-void get_cross_imformation(char *path, int *cross_num, Cross **cross);
-void get_car_imformation(char *path,int *car_num, Car **car,int *road_num);
-void get_road_imformation(char *path,int *road_num, Road **road);
+        Cross **cross, Road **road, const char *car_path, const char *cross_path, const char *road_path);
+void get_cross_imformation(const char *path, int *cross_num, Cross **cross);
+void get_car_imformation(const char *path,int *car_num, Car **car,int *road_num);
+void get_road_imformation(const char *path,int *road_num, Road **road);
 int get_next_int(char **str, int *num);
 void new_a_road_road_que(Road *road);
 void sort_car_by_speed_and_creat_list(Car *car, int car_num);

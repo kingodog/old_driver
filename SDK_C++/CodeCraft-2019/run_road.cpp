@@ -48,7 +48,7 @@ bool que_is_full(RoadQue *que){
     if((que->head[ROW] == -1) || (que->head[CLM] == -1)){
         return false;
     }else{
-        return (que->tail[ROW] == 0) && (que->tail[CLM] == 0);
+        return ((que->tail[ROW] == 0) && (que->tail[CLM] == 0));
     }
 }
 

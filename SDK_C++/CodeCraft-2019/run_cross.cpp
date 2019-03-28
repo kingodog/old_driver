@@ -302,7 +302,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                 set_head(road, way);
                                 break; 
                             } else {
-                                switch(cross_through(cross->road[m], way->lanes[i][j], next_real_speed, cross->road_dir_out[m])){
+                                switch(cross_through(cross->road[m], way->lanes[i][j], next_real_speed - j, cross->road_dir_out[m])){
                                     case COME_ON:
                                         way->lanes[i][j]->status = END;
                                         car_new_a_project_road(way->lanes[i][j], way->lanes[i][j]->next_step);

@@ -6,6 +6,8 @@ extern hash_map<int, Road *> road_map;
 extern hash_map<int, Cross *> cross_map;
 extern hash_map<int, int> cross_id_map;
 
+extern int **time_precursor_matrix[MAX_SPEED];
+
 extern CarList *carlist;
 extern CarList *carlist_sroted;
 extern int running_car_num;
@@ -29,6 +31,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     int no_car = 0;
     sys_time =10;
     reset_all_pre_flow(road, road_num);
+    init_time_precursor_matrix(cross, road, cross_num, road_num); //初始化放车的前驱矩阵
     put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车
     sys_time ++;
     reset_all_car_to_ready(road, road_num);
@@ -201,8 +204,6 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
         weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前的 反向到
     }
 
-    
-
     if(start == end){
         return -1;
     }
@@ -256,16 +257,37 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     //TODO:通过下一个路口得到下一条路
 }
 
+void init_time_precursor_matrix(Cross *cross, Road *road, int cross_num, int  road_num){
+    int i;
+    int **weight_matrix[MAX_SPEED];
+    for(i = 1; i < MAX_SPEED; i++){
+        weight_matrix[i] = build_weight_matrix_by_time(cross, road, cross_num, road_num, i);
+        time_precursor_matrix[i] = get_precursor_matrix_floyd(weight_matrix[i], cross_num);
+        free_a_matrix(weight_matrix[i], cross_num);
+    }
+}
+
+int get_put_road(int start, int end, int speed){
+    int **precursor_matrix = time_precursor_matrix[speed];
+    int src_id = cross_id_map[start];
+    int end_id = cross_id_map[end];
+    
+    while(precursor_matrix[src_id][end_id] != src_id){
+        end_id = precursor_matrix[src_id][end_id];
+    }
+    
+    return cross_to_road[end_id][src_id];
+}
 
 
 
 
-int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){          //需要更改 INFINITY_INT   
+int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){          
     int ***iteration_matrix;
     int ***precursor_matrix; 
     int i, j, k, l, m;
     iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（第0个）
-    precursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));  
+    precursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));    
     for(k = 0; k < cross_num + 1; k++){
         iteration_matrix[k] = new_a_int_matrix(cross_num);  
         precursor_matrix[k] = new_a_int_matrix(cross_num);  
@@ -274,7 +296,7 @@ int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){          
     for(i = 0; i < cross_num; i++){
         for(j=0; j < cross_num; j++){
             (iteration_matrix[0])[i][j] = weight_matrix[i][j];
-            if((i == j) || (weight_matrix[i][j] == INFINITY_INT)){
+            if((i == j) || (weight_matrix[i][j] == NO_CONNECT)){
                 precursor_matrix[0][i][j] = NIL;
             } else {
                 precursor_matrix[0][i][j] = i;

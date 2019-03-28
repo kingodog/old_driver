@@ -33,6 +33,8 @@ using namespace std;
 #define DEFEATED        ((int)-1)
 #define SUCCESSFUL      ((int)0)
 
+#define MAX_SPEED      ((int)11)                //  speed+1  才行   切记
+
 #define NOCAR           (NULL)
 
 void get_imformation(int *car_num, int *cross_num, int *road_num, Car **car, 

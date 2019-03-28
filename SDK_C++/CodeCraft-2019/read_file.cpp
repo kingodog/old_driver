@@ -2,7 +2,8 @@
 #include "project.h"
 extern CarList *carlist;
 extern CarList *carlist_sroted;
-int car_classified[11];
+int car_classified[MAX_SPEED];
+
 
 extern int ** cross_to_road;
 
@@ -31,7 +32,7 @@ void get_car_imformation(const char *path, int *car_num, Car **car, int *road_nu
     char StrLine[1024];
     char *str;
     int i=0;
-    for(i = 0; i < 11; i++){     //初始化数组;
+    for(i = 0; i < MAX_SPEED; i++){     //初始化数组;
         car_classified[i] = 0;
     }
     
@@ -304,7 +305,7 @@ int get_next_int(char **str, int *num){
 }
 
 void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照速度排序速度慢的在前
-    int car_sort[11];
+    int car_sort[MAX_SPEED];
     int i;
 
     CarList *p;
@@ -318,7 +319,7 @@ void sort_car_by_speed_and_creat_list(Car *car, int car_num){          //按照�
     p_sorted = carlist_sroted;                  
 
     car_sort[0] = car_classified[0];
-    for(i = 1; i < 11; i++){
+    for(i = 1; i < MAX_SPEED; i++){
 		car_sort[i] = car_classified[i-1] + car_sort[i-1];
 	}
 	for(i = 0; i < car_num; i++){

@@ -66,7 +66,7 @@ int get_road_weight_by_time(int start_id, int end_id, Road *road, int road_num, 
     for(i = 0; i < road_num; i++){
         if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
             return ceil(float(road[i].length) / get_min(speed, road[i].limit));                                    
-        }   else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].lanes_num == 1){
+        }   else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].bothway == 1){
             return ceil(float(road[i].length) / get_min(speed, road[i].limit)); 
         }
     }

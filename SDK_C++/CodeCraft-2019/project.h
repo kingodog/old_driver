@@ -16,6 +16,9 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
 void project_all_waiting_car(Road *road, int road_num, Cross *cross, int cross_num);
 void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, Cross *cross, int cross_num);
 int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_id, int this_road_end_id);
+void init_time_precursor_matrix(Cross *cross, Road *road, int cross_num, int  road_num);
+int get_put_road(int start, int end, int speed);
+
 int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num);
 int **new_a_int_matrix(int n);
 void free_a_matrix(int **matrix, int n);

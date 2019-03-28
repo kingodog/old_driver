@@ -35,17 +35,26 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
         //     printf(" ");
         // }
 
-        next_step = get_next_road(p->car->start, p->car->end, road, cross, road_num, cross_num, p->car->speed, NIL, NIL);
+        next_step = get_put_road(p->car->start, p->car->end, p->car->speed);
         if(next_step == -1){
              p = p->next;
              continue;
         }
 
         if(p->car->start == road_map[next_step]->cross_id_start){
+            if(road_map[next_step]->forward_surplus_flow <= 0){    
+                p = p->next;
+                continue;
+            }
             que = road_map[next_step]->forward;
         } else {
+            if(road_map[next_step]->back_surplus_flow <= 0){    
+                p = p->next;
+                continue;
+            }
             que = road_map[next_step]->back;
         }
+        
 
         if(!que_is_full(que)){
             real_speed = get_min(p->car->speed, road_map[next_step]->limit); 

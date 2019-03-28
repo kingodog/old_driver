@@ -22,20 +22,20 @@ int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, 
 
 int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值
     int i;
-    float x;
+    // float x;
     for(i = 0; i < road_num; i++){
         if(road[i].cross_id_start == start_id && road[i].cross_id_end == end_id){
-            if( road[i].pre_forward_surplus_flow <= 0 ){
+            if( road[i].pre_forward_surplus_flow <= JAM ){
                 return INFINITY_INT;
             }
-            x = (float)road[i].capacity/road[i].pre_forward_surplus_flow;
-            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);                                    
+            // x = (float)road[i].capacity/road[i].pre_forward_surplus_flow;
+            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) /(BETA*road[i].pre_forward_surplus_flow+SHUKE*road[i].lanes_num));                                    
         } else if (road[i].cross_id_start == end_id && road[i].cross_id_end == start_id && road[i].bothway == 1){
-            if( road[i].pre_back_surplus_flow <= 0 ){
+            if( road[i].pre_back_surplus_flow <= JAM ){
                 return INFINITY_INT;
             }
-            x = (float)road[i].capacity/road[i].pre_back_surplus_flow;
-            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) * x);    
+            // x = (float)road[i].capacity/road[i].pre_back_surplus_flow;
+            return (ceil(float(road[i].length) / get_min(speed, road[i].limit)) /(BETA*road[i].pre_back_surplus_flow+SHUKE*road[i].lanes_num));
         }
     }
     return NO_CONNECT;

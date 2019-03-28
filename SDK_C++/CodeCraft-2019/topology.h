@@ -10,6 +10,10 @@
 #define NO_CONNECT              (0x1<<21)
 #define INFINITY_INT            (0x1<<18)
 #define NIL                     (-1)
+
+#define JAM                     (int(0))
+#define BETA                    (float(0.02))
+#define SHUKE                   (float(0.02))
 // #define NO_CONNECT              (-1)
 
 int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed);

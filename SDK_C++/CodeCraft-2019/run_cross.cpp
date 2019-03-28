@@ -72,13 +72,14 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
             // // printf("22222222222ture_all_car : %d\n",all_car_running(road, road_num));   //test 
             // num ++;
             // printf("all_put_num : %d\n",num);   //test
+            surplus_map_capacity -=  p->car->speed;
             p->car->project->start_time = sys_time;
             p->car->status = END;
             car_new_a_project_road(p->car, next_step);
             p->car->next_step = -1;
             p->car->next_dir = -1;
             delete_car_from_list(&p);                                           //函数包括了p=p->next;
-            surplus_map_capacity -= real_speed;
+
             running_car_num ++;
         } else {
             p = p->next;
@@ -229,10 +230,10 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                         speed = get_min(way->lanes[i][j]->speed, road->limit);
                         if(speed <= distance){                      //不过路口   可能不需要  暂时保留
                         
-                            way->lanes[i][j+speed] = way->lanes[i][j]; 
-                            way->lanes[i][j+speed]->status = END;
-                            way->lanes[i][j+speed]->next_dir = -1;
-                            way->lanes[i][j+speed]->next_step = -1;
+                            way->lanes[i][j-speed] = way->lanes[i][j]; 
+                            way->lanes[i][j-speed]->status = END;
+                            way->lanes[i][j-speed]->next_dir = -1;
+                            way->lanes[i][j-speed]->next_step = -1;
                             way->lanes[i][j] = NULL;
                             lock = 0;
                             *end_flag = 0;                                  //可能可优化
@@ -244,9 +245,9 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             k++;
                             printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
                             way->lanes[i][j]->status = ARRIVE;
+                            surplus_map_capacity += way->lanes[i][j]->speed;
                             way->lanes[i][j] = NULL;
                             running_car_num --;
-                            surplus_map_capacity += speed;
                             lock = 0;
                             *end_flag = 0;                      //可能可优化
                             *curr_flow = *curr_flow + speed;
@@ -321,7 +322,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                                         way->lanes[i][j] = NULL;
                                         *end_flag = 0;
                                         lock = 0;
-                                        adjust_a_lane(j, road->length, way->lanes[i], road->limit);
+                                        adjust_a_lane(j+1, road->length, way->lanes[i], road->limit);
                                         set_tail(road, way);
                                         set_head(road, way);
                                     break;
@@ -457,7 +458,7 @@ Car *get_right_road_first_car(Cross * corss, int self_road_id){
 
     if(right_input == NULL){
         return NULL;
-    } else if( right_input->head[0] < 0){
+    } else if( que_is_empty(right_input)){
         return NULL;
     } else {
         return (right_input->lanes[right_input->head[0]][right_input->head[1]]);
@@ -478,7 +479,7 @@ Car *get_across_road_first_car(Cross * corss, int self_road_id){
 
     if(across_input == NULL){
         return NULL;
-    } else if( across_input->head[0] < 0){
+    } else if(que_is_empty(across_input)){
         return NULL;
     } else {
         return (across_input->lanes[across_input->head[0]][across_input->head[1]]);

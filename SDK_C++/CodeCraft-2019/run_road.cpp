@@ -320,10 +320,10 @@ void set_tail(Road *road, RoadQue *que){
             }
         }
     }
-    if(j >= road->length || i >= road->lanes_num){
-        que->tail[ROW] = 0;
-        que->tail[CLM] = 0;
-    }
+
+    que->tail[ROW] = 0;
+    que->tail[CLM] = 0;
+
 }
 
 

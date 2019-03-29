@@ -261,7 +261,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             }
 
                             if(way->lanes[i][j]->next_dir == LEFT){
-                                car_p = get_right_road_first_car(cross, road->id);
+                                car_p = get_right_road_first_car(cross, road->id, road);
                                 if(car_p !=NULL){       
                                     if(car_p->next_dir == STRAIGHT){   //有车子confict
                                         
@@ -272,14 +272,14 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             }
 
                             if(way->lanes[i][j]->next_dir == RIGHT){
-                                car_p = get_left_road_first_car(cross, road->id);
+                                car_p = get_left_road_first_car(cross, road->id, road);
                                 if(car_p !=NULL){       
                                     if(car_p->next_dir == STRAIGHT){ 
                                         
                                         return ; 
                                     }
                                 } 
-                                car_p = get_across_road_first_car(cross, road->id);
+                                car_p = get_across_road_first_car(cross, road->id, road);
                                 if(car_p !=NULL){       
                                     if(car_p->next_dir == LEFT){ 
                                         
@@ -423,7 +423,7 @@ void adjust_a_lane(int start, int end, Car **lane, int limit_speed){            
 
 
 
-Car *get_left_road_first_car(Cross * corss, int self_road_id){
+Car *get_left_road_first_car(Cross * corss, int self_road_id, Road *road){
     int i;
     RoadQue *left_input;
     for( i = 0; i < 4; i++)
@@ -435,16 +435,11 @@ Car *get_left_road_first_car(Cross * corss, int self_road_id){
 
     left_input = corss->road_dir[(i+1)%4];
 
-    if(left_input == NULL){
-        return NULL;
-    } else if(que_is_empty(left_input)){
-        return NULL;
-    } else {
-        return (left_input->lanes[left_input->head[0]][left_input->head[1]]);
-    }
+    return (first_wait_car(road, left_input));
+
 }
 
-Car *get_right_road_first_car(Cross * corss, int self_road_id){
+Car *get_right_road_first_car(Cross * corss, int self_road_id, Road *road){
     int i;
     RoadQue *right_input;
     for( i = 0; i < 4; i++)
@@ -456,16 +451,10 @@ Car *get_right_road_first_car(Cross * corss, int self_road_id){
 
     right_input = corss->road_dir[(i+3)%4];
 
-    if(right_input == NULL){
-        return NULL;
-    } else if( que_is_empty(right_input)){
-        return NULL;
-    } else {
-        return (right_input->lanes[right_input->head[0]][right_input->head[1]]);
-    }
+    return (first_wait_car(road, right_input));
 }
 
-Car *get_across_road_first_car(Cross * corss, int self_road_id){
+Car *get_across_road_first_car(Cross * corss, int self_road_id, Road *road){
     int i;
     RoadQue *across_input;
     for( i = 0; i < 4; i++)
@@ -477,13 +466,7 @@ Car *get_across_road_first_car(Cross * corss, int self_road_id){
 
     across_input = corss->road_dir[(i+2)%4];
 
-    if(across_input == NULL){
-        return NULL;
-    } else if(que_is_empty(across_input)){
-        return NULL;
-    } else {
-        return (across_input->lanes[across_input->head[0]][across_input->head[1]]);
-    }
+    return (first_wait_car(road, across_input));
 }
 
 

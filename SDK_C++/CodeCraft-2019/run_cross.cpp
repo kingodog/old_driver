@@ -63,7 +63,7 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
                 enqueue(road_map[next_step], p->car, real_speed, FORWARD);
                 road_map[next_step]->forward_surplus_flow -= real_speed;
                 road_map[next_step]->pre_forward_surplus_flow = road_map[next_step]->forward_surplus_flow;
-            } else {
+            } else if(p->car->start == road_map[next_step]->cross_id_end){
                 enqueue(road_map[next_step], p->car, real_speed, BACK);
                 road_map[next_step]->back_surplus_flow -= real_speed;
                 road_map[next_step]->pre_back_surplus_flow = road_map[next_step]->back_surplus_flow;
@@ -189,7 +189,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
     int next_real_speed;
     int *curr_flow;
     int *next_flow;
-    static int k;
+    // static int k;
     if(que_is_empty(way)){   
         return ;
     }
@@ -242,8 +242,8 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             set_head(road, way);
                         } else if (way->lanes[i][j]->next_step == -1 && way->lanes[i][j]->next_dir == STRAIGHT){            //此路口为终点
                 
-                            k++;
-                            printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
+                            // k++;
+                            // printf("~~~~~~~~~arrive: %d_____%d\n", sys_time,k);   //test
                             way->lanes[i][j]->status = ARRIVE;
                             surplus_map_capacity += way->lanes[i][j]->speed;
                             way->lanes[i][j] = NULL;
@@ -263,7 +263,7 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             if(way->lanes[i][j]->next_dir == LEFT){
                                 car_p = get_right_road_first_car(cross, road->id);
                                 if(car_p !=NULL){       
-                                    if(car_p->next_dir == STRAIGHT){   //有车子confict
+                                    if(car_p->next_dir == STRAIGHT && car_p->status ==WAIT){   //有车子confict
                                         
                                         return ; 
                                     }
@@ -274,14 +274,14 @@ void run_a_road(Cross *cross, RoadQue *way, Road *road, int *end_flag){         
                             if(way->lanes[i][j]->next_dir == RIGHT){
                                 car_p = get_left_road_first_car(cross, road->id);
                                 if(car_p !=NULL){       
-                                    if(car_p->next_dir == STRAIGHT){ 
+                                    if(car_p->next_dir == STRAIGHT && car_p->status ==WAIT){ 
                                         
                                         return ; 
                                     }
                                 } 
                                 car_p = get_across_road_first_car(cross, road->id);
                                 if(car_p !=NULL){       
-                                    if(car_p->next_dir == LEFT){ 
+                                    if(car_p->next_dir == LEFT && car_p->status ==WAIT){ 
                                         
                                         return ; 
                                     }

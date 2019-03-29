@@ -25,6 +25,7 @@ int end_put_car = 0;
 
 int ** cross_to_road;
 
+int **projext_weight_matrix[MAX_SPEED];
 int **time_precursor_matrix[MAX_SPEED];
 
 int main(int argc, char *argv[])

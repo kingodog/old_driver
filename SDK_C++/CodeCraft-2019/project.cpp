@@ -22,11 +22,13 @@ extern int lock ;
 extern int map_capacity;
 extern int surplus_map_capacity;
 extern int ** cross_to_road;
+extern int **projext_weight_matrix[MAX_SPEED];
 
 
 void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cross, Road *road){
-    clock_t start, finish;  //test
+    // clock_t start, finish;  //test
     double duration;
+    int i;
 
     int no_car = 0;
     sys_time =10;
@@ -37,48 +39,53 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     reset_all_car_to_ready(road, road_num);
     while(carlist != NULL){
      
-        start = clock(); 
+        // start = clock(); 
         run_all_road(road, road_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("run_all_road:%lfs\n",duration);
+        // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("run_all_road:%lfs\n",duration);
 
-        start = clock(); 
-        project_all_waiting_car(road, road_num, cross, cross_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("project_all_waiting_car:%lfs\n",duration);
-
-        start = clock(); 
-        run_all_cross(cross, cross_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("run_all_cross:%lfs\n",duration);
-
-        start = clock();
-        reset_all_pre_flow(road, road_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("reset_all_pre_flow:%lfs\n",duration);
-
-        start = clock();
-        put_car(car, road, cross, cross_num, road_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("put_car:%lfs\n",duration);
-
-        start = clock();
-        reset_all_car_to_ready(road, road_num);
-        finish = clock(); 
-        duration = (double)(finish-start) / CLOCKS_PER_SEC; 
-        printf("reset_all_car_to_ready:%lfs\n",duration);
-
-
-
-        printf("ture_all_car : %d\n",all_car_running(road, road_num));
-        if(all_car_running(road, road_num)==0){
-            printf("~");
+        for( i = 1; i < MAX_SPEED; i++)
+        {
+            projext_weight_matrix[i] = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, i);
         }
+
+        // start = clock(); 
+        project_all_waiting_car(road, road_num, cross, cross_num);
+        // // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("project_all_waiting_car:%lfs\n",duration);
+
+        // start = clock(); 
+        run_all_cross(cross, cross_num);
+        // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("run_all_cross:%lfs\n",duration);
+
+        // start = clock();
+        reset_all_pre_flow(road, road_num);
+        // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("reset_all_pre_flow:%lfs\n",duration);
+
+        // start = clock();
+        put_car(car, road, cross, cross_num, road_num);
+        // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("put_car:%lfs\n",duration);
+
+        // start = clock();
+        reset_all_car_to_ready(road, road_num);
+        // finish = clock(); 
+        // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
+        // printf("reset_all_car_to_ready:%lfs\n",duration);
+
+
+
+        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
+        // if(all_car_running(road, road_num)==0){
+        //     printf("~");
+        // }
         sys_time ++;
         printf("\ntime = %d \n", sys_time);
     }
@@ -87,11 +94,15 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
 
     while(running_car_num != 0){
         run_all_road(road, road_num);
+        for( i = 1; i < MAX_SPEED; i++)
+        {
+            projext_weight_matrix[i] = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, i);
+        }
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
         reset_all_car_to_ready(road, road_num);
-        printf("ture_all_car : %d\n",all_car_running(road, road_num));
+        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         sys_time ++;
         printf("\ntime = %d \n", sys_time);
     }
@@ -120,9 +131,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
         for( j = 0; j < this_road->length; j++)
         {
             if(que[i][j] !=NULL){
-                if(que[i][j]->id==11046){            //test
-                    k = que[i][j]->id;
-                }
+                // if(que[i][j]->id==11046){            //test
+                //     k = que[i][j]->id;
+                // }
                 if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_start,this_road->cross_id_end);
                     if(que[i][j]->next_step == -1){             //到达目的地
@@ -153,9 +164,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
             for( j = 0; j < this_road->length; j++)
             {
                 if(que[i][j] !=NULL){
-                    if(que[i][j]->id==11046){            //test
-                        k = que[i][j]->id;
-                    }
+                    // if(que[i][j]->id==11046){            //test
+                    //     k = que[i][j]->id;
+                    // }
                     if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_end, this_road->cross_id_start);
                         if(que[i][j]->next_step == -1){             //到达目的地
@@ -187,12 +198,22 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 
 //可以按照书上进行优化   //最后的参数不是道路的起始和终止路口，而是需要看车子，车子开来的方向为起始~~~~
 int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_start_id, int this_road_end_id){  
-    int **weight_matrix = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, speed);
+    int i, j, k = 0;
+    
+    int **weight_matrix = new_a_int_matrix(cross_num);
+    for( i = 0; i < cross_num; i++)
+    {
+        for( j = 0; j < cross_num; j++)
+        {
+            weight_matrix[i][j] = projext_weight_matrix[speed][i][j];
+        }
+    }
+    
+
     int *dist = (int *)malloc(sizeof(int)*cross_num);
     int *prev = (int *)malloc(sizeof(int)*cross_num);
     int *flag = (int *)malloc(sizeof(int)*cross_num);
 
-    int i, j, k = 0;
     int src_id = cross_id_map[start];
 
     int shiedl_start = NIL; 
@@ -238,6 +259,7 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
             }
         }
     }
+
     free_a_matrix(weight_matrix, cross_num);
 
     //找到end在cross数组中id

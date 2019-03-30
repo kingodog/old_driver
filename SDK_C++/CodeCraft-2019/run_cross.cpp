@@ -31,10 +31,10 @@ void put_car(Car *car, Road *road, Cross *cross, int cross_num, int road_num){
     // static  int num=0;   //test
     int capacity_conversion = map_capacity * ALPHA;
     while(surplus_map_capacity > capacity_conversion && p !=NULL){
-        if(p->car->start_time < sys_time){            //test
-            p = p->next;
-            continue;
-        }
+        // if(p->car->start_time < sys_time){            //test
+        //     p = p->next;
+        //     continue;
+        // }
 
         next_step = get_put_road(p->car->start, p->car->end, p->car->speed);
         if(next_step == -1){

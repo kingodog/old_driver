@@ -31,10 +31,10 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     int i;
 
     int no_car = 0;
-    sys_time =0;
+    sys_time =50;
     reset_all_pre_flow(road, road_num);
     init_time_precursor_matrix(cross, road, cross_num, road_num); //初始化放车的前驱矩阵
-    put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加�
+    put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加�
     sys_time ++;
     reset_all_car_to_ready(road, road_num);
     while(carlist != NULL){
@@ -80,7 +80,10 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
         // printf("reset_all_car_to_ready:%lfs\n",duration);
 
-
+        for( i = 1; i < MAX_SPEED; i++)
+        {
+            free_a_matrix( projext_weight_matrix[i], cross_num);
+        }
 
         // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         // if(all_car_running(road, road_num)==0){
@@ -102,6 +105,10 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
         reset_all_car_to_ready(road, road_num);
+        for( i = 1; i < MAX_SPEED; i++)
+        {
+            free_a_matrix( projext_weight_matrix[i], cross_num);
+        }
         // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         sys_time ++;
         // printf("\ntime = %d \n", sys_time);
@@ -136,8 +143,8 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                 // }
                 if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                     que[i][j]->next_step = get_next_road(this_road->cross_id_end, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_start,this_road->cross_id_end);
-                    if(que[i][j]->next_step == -1){             //到达目的�
-                        que[i][j]->next_dir = STRAIGHT;  //到达�  � 直行同优先级
+                    if(que[i][j]->next_step == -1){             //到达目的�
+                        que[i][j]->next_dir = STRAIGHT;  //到达�  � 直行同优先级
                         this_road->pre_forward_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                         continue;
                     } else {
@@ -151,7 +158,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                     }
                     
                 } else {
-                    break;                  //该条道路的后车就不用检�
+                    break;                  //该条道路的后车就不用检�
                 }
             }
         }
@@ -169,7 +176,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                     // }
                     if(que[i][j]->status == WAIT && j < get_min(que[i][j]->speed, this_road->limit)){
                         que[i][j]->next_step = get_next_road(this_road->cross_id_start, que[i][j]->end, all_road, cross, road_num, cross_num, que[i][j]->speed, this_road->cross_id_end, this_road->cross_id_start);
-                        if(que[i][j]->next_step == -1){             //到达目的�
+                        if(que[i][j]->next_step == -1){             //到达目的�
                             que[i][j]->next_dir = STRAIGHT;
                             this_road->pre_back_surplus_flow += get_min(que[i][j]->speed, this_road->limit);
                             continue;
@@ -184,7 +191,7 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
                         }
                         
                     } else {
-                        break;                  //该条道路的后车就不用检�
+                        break;                  //该条道路的后车就不用检�
                     }
                 }
             }
@@ -199,7 +206,9 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 //可以按照书上进行优化   //最后的参数不是道路的起始和终止路口，而是需要看车子，车子开来的方向为起始~~~~
 int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_start_id, int this_road_end_id){  
     int i, j, k = 0;
-    
+    if(start == end){
+        return -1;
+    }
     int **weight_matrix = new_a_int_matrix(cross_num);
     for( i = 0; i < cross_num; i++)
     {
@@ -222,13 +231,11 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
         shiedl_start = cross_id_map[this_road_start_id];
         shiedl_end = cross_id_map[this_road_end_id];
 
-        weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前�反向�
+        weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前�反向�
     }
 
-    if(start == end){
-        return -1;
-    }
-    //初始�
+ 
+    //初始�
     for(i = 0; i < cross_num; i++){
         dist[i] = weight_matrix[src_id][i];
         prev[i] = NIL;
@@ -236,9 +243,9 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
     }  
     dist[src_id] = 0;
     flag[src_id] = SIGNED;
-    //遍历除了start顶点的其他顶�
+    //遍历除了start顶点的其他顶�
     for(i = 0; i < cross_num - 1; i++){
-        //找到未标记的顶点的最短估计中最小�
+        //找到未标记的顶点的最短估计中最小�
         int min = NO_CONNECT;
         for(j = 0; j < cross_num; j++){
             if(flag[j] == UNSIGN && dist[j] < min){
@@ -308,7 +315,7 @@ int ** get_precursor_matrix_floyd(int **weight_matrix, int cross_num){
     int ***iteration_matrix;
     int ***precursor_matrix; 
     int i, j, k, l, m;
-    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（�个）
+    iteration_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));        //比结点多一个（�个）
     precursor_matrix = (int ***)malloc(sizeof(int**)*(cross_num+1));    
     for(k = 0; k < cross_num + 1; k++){
         iteration_matrix[k] = new_a_int_matrix(cross_num);  

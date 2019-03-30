@@ -33,7 +33,7 @@ using namespace std;
 #define DEFEATED        ((int)-1)
 #define SUCCESSFUL      ((int)0)
 
-#define MAX_SPEED      ((int)11)                //  speed+1  才行   切记
+#define MAX_SPEED      ((int)17)                //  speed+1  才行   切记
 
 #define NOCAR           (NULL)
 

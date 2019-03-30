@@ -67,6 +67,7 @@ int cross_through(Road *road, Car *car, int distance, RoadQue * que);
 void reset_all_car_to_ready(Road *road, int road_num);
 void set_head(Road *road, RoadQue *que);
 void set_tail(Road *road, RoadQue *que);
+Car *first_wait_car(Road *road,RoadQue *que);
 // int get_real_speed(Road *road, Car *car, int curr_column, int block);
 // void set_head(Road *road);
 // void set_tail(Road *road);

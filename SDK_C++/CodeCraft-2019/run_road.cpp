@@ -326,6 +326,24 @@ void set_tail(Road *road, RoadQue *que){
 
 }
 
+Car *first_wait_car(Road *road,RoadQue *que){
+    int i, j;
+    if(que == NULL){
+        return NULL;
+    }
+    for(j = 0; j < road->length; j++){
+        for(i = 0; i < road->lanes_num; i++){
+            if(que->lanes[i][j] != NULL){
+                if(que->lanes[i][j]->status == WAIT){
+                    return que->lanes[i][j]; 
+                }
+            }
+     
+        }
+    }
+    return NULL;
+}
+
 
 //测试
 // int main(){

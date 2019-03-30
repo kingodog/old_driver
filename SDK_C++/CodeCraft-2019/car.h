@@ -1,7 +1,7 @@
 #ifndef _RUN_CAR_H_
 #define _RUN_CAR_H_
 
-#define  CAR_MAX_RECORD (100)
+#define  CAR_MAX_RECORD (256)
 
 #define UNBORN          (0)
 #define READY           (1)

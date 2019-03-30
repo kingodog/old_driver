@@ -16,7 +16,7 @@
 #define SHUKE                   (float(0.02))
 // #define NO_CONNECT              (-1)
 
-int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed);
+void build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num);
 int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_num, int speed);
 
 int ** build_weight_matrix_by_time(Cross *cross, Road *road, int cross_num, int  road_num, int speed);

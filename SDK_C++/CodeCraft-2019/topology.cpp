@@ -1,23 +1,20 @@
 #include "topology.h"
-
-int ** build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num,int speed){
-    int **weight_matrix;
-    int i, j;
-    weight_matrix = (int**)malloc(sizeof(int*)*cross_num);  
-    for(i = 0; i < cross_num; i++){
-        weight_matrix[i] = (int*)malloc(sizeof(int)*cross_num); 
-    }
-
-    for(i = 0; i < cross_num; i++){
-        for(j = 0; j < cross_num; j++){
-            if(i == j){
-                weight_matrix[i][j] = 0;
-            } else {
-                weight_matrix[i][j] = get_road_weight_by_capacity(cross[i].id, cross[j].id, road, road_num, speed);
+#include "read_file.h"
+extern int **projext_weight_matrix[MAX_SPEED];
+void build_weight_matrix_by_capacity(Cross *cross, Road *road, int cross_num, int  road_num){
+    int i, j, k;
+    for( k = 1; k < MAX_SPEED; k++)
+    {
+        for(i = 0; i < cross_num; i++){
+            for(j = 0; j < cross_num; j++){
+                if(i == j){
+                    projext_weight_matrix[k][i][j] = 0;
+                } else {
+                    projext_weight_matrix[k][i][j] = get_road_weight_by_capacity(cross[i].id, cross[j].id, road, road_num, k);
+                }
             }
         }
     }
-    return weight_matrix;
 }
 
 int get_road_weight_by_capacity(int start_id, int end_id, Road *road, int road_num, int speed){             //根据速度来获取某两个点的权值

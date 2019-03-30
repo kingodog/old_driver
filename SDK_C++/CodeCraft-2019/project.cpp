@@ -34,6 +34,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     sys_time =1;
     reset_all_pre_flow(road, road_num);
     init_time_precursor_matrix(cross, road, cross_num, road_num); //初始化放车的前驱矩阵
+    init_projext_weight_matrix(cross, road, cross_num, road_num); 
     put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车
     sys_time ++;
     reset_all_car_to_ready(road, road_num);
@@ -45,10 +46,8 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
         // printf("run_all_road:%lfs\n",duration);
 
-        for( i = 1; i < MAX_SPEED; i++)
-        {
-            projext_weight_matrix[i] = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, i);
-        }
+        build_weight_matrix_by_capacity(cross, road, cross_num, road_num);
+       
 
         // start = clock(); 
         project_all_waiting_car(road, road_num, cross, cross_num);
@@ -80,9 +79,8 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         // duration = (double)(finish-start) / CLOCKS_PER_SEC; 
         // printf("reset_all_car_to_ready:%lfs\n",duration);
 
-
-
-        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
+ 
+        printf("ture_all_car : %d\n",all_car_running(road, road_num));
         // if(all_car_running(road, road_num)==0){
         //     printf("~");
         // }
@@ -94,14 +92,14 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
 
     while(running_car_num != 0){
         run_all_road(road, road_num);
-        for( i = 1; i < MAX_SPEED; i++)
-        {
-            projext_weight_matrix[i] = build_weight_matrix_by_capacity(cross, road, cross_num, road_num, i);
-        }
+       
+        build_weight_matrix_by_capacity(cross, road, cross_num, road_num);
+
         project_all_waiting_car(road, road_num, cross, cross_num);
         run_all_cross(cross, cross_num);
         reset_all_pre_flow(road, road_num);
         reset_all_car_to_ready(road, road_num);
+
         // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         sys_time ++;
         printf("\ntime = %d \n", sys_time);
@@ -288,6 +286,15 @@ void init_time_precursor_matrix(Cross *cross, Road *road, int cross_num, int  ro
         free_a_matrix(weight_matrix[i], cross_num);
     }
 }
+
+void init_projext_weight_matrix(Cross *cross, Road *road, int cross_num, int  road_num){
+    int i;
+    for(i = 1; i < MAX_SPEED; i++){
+        projext_weight_matrix[i] = new_a_int_matrix(cross_num);
+    }
+}
+
+
 
 int get_put_road(int start, int end, int speed){
     int **precursor_matrix = time_precursor_matrix[speed];

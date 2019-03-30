@@ -31,7 +31,7 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
     int i;
 
     int no_car = 0;
-    sys_time =0;
+    sys_time =1;
     reset_all_pre_flow(road, road_num);
     init_time_precursor_matrix(cross, road, cross_num, road_num); //初始化放车的前驱矩阵
     put_car(car, road, cross, cross_num, road_num);//第一次特殊，先加车

@@ -80,12 +80,13 @@ void project_car(int car_num, int cross_num, int road_num, Car *car, Cross *cros
         // printf("reset_all_car_to_ready:%lfs\n",duration);
 
  
-        printf("ture_all_car : %d\n",all_car_running(road, road_num));
+        // printf("ture_all_car : %d\n",all_car_running(road, road_num));
         // if(all_car_running(road, road_num)==0){
         //     printf("~");
         // }
         sys_time ++;
-        // printf("\ntime = %d \n", sys_time);
+        //     printf(" ");
+        // }
     }
 
     reset_all_pre_flow(road, road_num);
@@ -197,8 +198,14 @@ void project_a_road_waiting_car(Road *this_road, Road *all_road, int road_num, C
 //可以按照书上进行优化   //最后的参数不是道路的起始和终止路口，而是需要看车子，车子开来的方向为起始~~~~
 int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, int cross_num, int speed, int this_road_start_id, int this_road_end_id){  
     int i, j, k = 0;
-    
+
+    if(start == end){
+        return -1;
+    }
+
     int **weight_matrix = new_a_int_matrix(cross_num);
+
+
     for( i = 0; i < cross_num; i++)
     {
         for( j = 0; j < cross_num; j++)
@@ -223,9 +230,6 @@ int get_next_road(int start, int end, Road *road, Cross *cross, int road_num, in
         weight_matrix[shiedl_end][shiedl_start] = NO_CONNECT;     //屏蔽的为当前�反向�
     }
 
-    if(start == end){
-        return -1;
-    }
     //初始�
     for(i = 0; i < cross_num; i++){
         dist[i] = weight_matrix[src_id][i];
